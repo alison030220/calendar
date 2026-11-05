@@ -1,1 +1,5688 @@
-# calendar
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Our Memories</title>
+
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=eccaea6437ab3e7d2ff10bb39fd3b19c&amp;libraries=services" type="text/javascript">
+</script>
+<style>
+:root {
+  --bg: #faf9f7;
+  --card: #fff;
+  --text: #000;
+  --secondary: #888;
+  --accent: #e8a0ae;
+  --line: #e9e7e4;
+  --radius: 18px;
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+[hidden] {
+  display: none !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h2,
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--card);
+  padding: 13px 15px;
+  margin: 0;
+  color: var(--text);
+}
+input::placeholder,
+textarea::placeholder {
+  color: #aaa;
+  font-size: 12px;
+}
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  padding: 0;
+}
+textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.7;
+  overflow: hidden;
+}
+button {
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: transparent;
+  color: inherit;
+  transition: background 0.16s;
+}
+button:hover {
+  background: #f0eeeb;
+}
+.primary {
+  display: block;
+  width: 100%;
+  background: #000 !important;
+  color: #fff !important;
+  padding: 12px 16px;
+  margin-top: 20px;
+  min-height: 46px;
+  font-weight: 500;
+}
+.primary:hover {
+  background: #292929 !important;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 23px;
+  background: transparent;
+}
+.brand {
+  font-size: 17px;
+  letter-spacing: -0.5px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.brand span {
+  color: var(--accent);
+}
+#appHeader {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#appHeader #pageTitle {
+  font-size: 15px;
+}
+#appHeader.is-home #pageTitle {
+  margin-right: auto;
+  font-size: 17px;
+}
+#appHeader.is-home #homeButton {
+  display: none;
+}
+#menuButton {
+  font-size: 20px;
+}
+body:not(.authenticated) .page {
+  display: none !important;
+}
+.page {
+  width: 100%;
+  max-width: 560px;
+  margin: 12px auto 64px;
+  padding: 0 24px;
+}
+.page > h2 {
+  display: none;
+}
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+}
+.field-label {
+  display: block;
+  color: var(--secondary);
+  font-size: 12px;
+  margin: 18px 0 7px;
+}
+.field-label:first-child {
+  margin-top: 0;
+}
+.editor {
+  padding: 0;
+  margin-top: 26px;
+}
+.editor > h3 {
+  margin-bottom: 16px;
+}
+.list-heading,
+.editor + h3,
+.editor + div > h3 {
+  margin: 32px 0 16px;
+}
+.check-label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--secondary);
+  font-size: 12px;
+  margin-top: 18px;
+}
+.search-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.search-row input {
+  flex: 1;
+}
+.search-row button {
+  padding: 0 14px;
+  min-width: 44px;
+  background: var(--card);
+}
+.upload-label {
+  display: block;
+  width: fit-content;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 14px 0;
+}
+.photo-input,
+input[type="file"] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+}
+input[type="file"]::file-selector-button {
+  border: 0;
+  background: #fff;
+  border-radius: 9px;
+  padding: 8px 12px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+.photo-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.photo-preview:empty {
+  display: none;
+}
+.photo-preview img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.empty-state {
+  color: var(--secondary);
+  font-size: 12px;
+  text-align: center;
+  padding: 24px 12px;
+  display: block;
+}
+#loginBox {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+}
+.login-form {
+  width: 100%;
+  max-width: 342px;
+  display: grid;
+  gap: 12px;
+}
+.login-form .brand {
+  text-align: center;
+  margin-bottom: 38px;
+  font-size: 22px;
+}
+.login-form .primary {
+  margin-top: 4px;
+}
+.login-form input {
+  min-height: 48px;
+}
+#loginMessage {
+  font-size: 12px;
+  text-align: center;
+  color: #9d4c60;
+  overflow-wrap: anywhere;
+}
+.together {
+  text-align: center;
+  padding: 40px 0 54px;
+}
+.together > p:first-child {
+  font-size: 12px;
+}
+.together h2 {
+  font-size: 28px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 2px 0;
+}
+.anniversary {
+  font-size: 11px;
+  color: var(--secondary);
+}
+.home-grid {
+  display: grid;
+  gap: 28px;
+}
+.message-card {
+  padding: 22px;
+}
+.message-card h2 {
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+#todayMessages {
+  font-size: 12px;
+}
+#todayMessages > div {
+  background: transparent !important;
+  padding: 7px 0 !important;
+  margin: 0 0 8px !important;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.message-compose {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  border-top: 1px solid #f3f1ee;
+  padding-top: 8px;
+}
+.message-compose input {
+  padding: 7px 0;
+  font-size: 12px;
+  flex: 1;
+}
+.message-compose button {
+  width: 32px;
+  height: 32px;
+  font-size: 19px;
+  color: #888;
+}
+.recent-section > h2 {
+  text-align: center;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+.recent-memory {
+  text-align: left;
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  font-size: 12px;
+}
+.recent-memory:hover {
+  background: #fff;
+}
+.recent-memory img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px;
+}
+.recent-copy {
+  display: block;
+  padding: 16px 20px;
+}
+.recent-copy strong {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+}
+.recent-copy p {
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: #666;
+}
+.month {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0 22px;
+}
+.month h2,
+.month h3 {
+  font-size: 15px;
+}
+.month button {
+  font-size: 23px;
+}
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.weekdays div {
+  text-align: center;
+  font-size: 10px;
+  color: #aaa;
+  padding: 8px 0;
+}
+.day,
+.empty {
+  min-height: 48px;
+}
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+  gap: 0;
+}
+.day:hover,
+.day.selected {
+  background: #fff;
+}
+.day:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.heart {
+  font-size: 11px;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.memory-box {
+  margin-top: 40px;
+}
+.memory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.memory-heading h3 {
+  font-size: 14px;
+}
+.heart-button {
+  font-size: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+  color: var(--accent);
+  background: transparent;
+}
+.heart-button::after {
+  content: "♡";
+  font-size: 24px;
+}
+.heart-button.active::after {
+  content: "♥";
+}
+.memory-box textarea {
+  min-height: 110px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px 12px;
+  text-align: center;
+}
+.stat-card > span {
+  display: block;
+  color: var(--secondary);
+  font-size: 11px;
+}
+.stat-card > [id] {
+  color: var(--accent);
+  font-size: 23px;
+  font-weight: 600;
+  margin-top: 7px;
+}
+.visited-places {
+  margin-top: 30px;
+}
+.visited-places h3 {
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+#statsPlaces {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  font-size: 13px;
+  line-height: 2.3;
+  overflow-wrap: anywhere;
+}
+#dateMap,
+#restaurantMap {
+  height: clamp(320px, 55svh, 520px);
+  width: 100%;
+  background: #eeeded;
+  border-radius: 18px;
+  overflow: hidden;
+}
+#mapSection,
+#restaurantMapSection {
+  max-width: 960px;
+}
+.place-detail {
+  margin: 16px 0 24px;
+  overflow-wrap: anywhere;
+}
+.place-detail > button {
+  display: block;
+  width: 100%;
+  background: #fff;
+  text-align: left;
+  padding: 20px;
+  border-radius: 18px;
+}
+.place-detail time {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin: 3px 0 12px;
+}
+.place-detail p {
+  white-space: pre-wrap;
+  font-size: 13px;
+}
+.place-detail strong {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.place-detail strong span {
+  color: #888;
+  font-size: 22px;
+}
+#restaurantMapSection > .editor,
+#restaurantMapSection > .editor + div {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#placeResults > div,
+#restaurantPageResults > div {
+  background: #fff !important;
+  border-radius: 12px !important;
+  overflow-wrap: anywhere;
+}
+#datePlanList > div,
+#watchedList > div,
+#lettersList > div,
+#photoboothList > div,
+#restaurantList > div,
+#bucketList > div {
+  background: #fff !important;
+  border-radius: 18px !important;
+  padding: 20px !important;
+  margin-bottom: 14px !important;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  max-width: 100%;
+}
+#datePlanList > div > div,
+#watchedList > div > div,
+#lettersList > div > div,
+#photoboothList > div > div,
+#restaurantList > div > div {
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+#datePlanList button,
+#watchedList button,
+#lettersList button,
+#photoboothList button,
+#restaurantList button,
+#bucketList button {
+  background: transparent !important;
+  color: #888 !important;
+  font-size: 12px !important;
+  padding: 6px 8px !important;
+  border-radius: 8px;
+}
+#photoboothList img {
+  max-width: 100%;
+  height: auto !important;
+  max-height: 600px;
+  object-fit: contain !important;
+  border-radius: 14px !important;
+}
+.watch-date {
+  margin: 28px 0 12px;
+  font-size: 14px;
+}
+#bucketSection > div:first-of-type {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0;
+}
+#bucketList > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#mainMenu {
+  border: 0;
+  padding: 24px;
+  width: 100%;
+  max-width: 560px;
+  height: 100svh;
+  max-height: 100svh;
+  margin: 0 0 0 auto;
+  background: var(--bg);
+  color: #000;
+  overflow-y: auto;
+}
+#mainMenu::backdrop {
+  background: rgba(0, 0, 0, 0.16);
+}
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 32px;
+}
+.menu-header .brand {
+  font-size: 17px;
+}
+#mainMenu nav button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  padding: 18px 0;
+  min-height: 58px;
+}
+#mainMenu nav button span {
+  font-size: 22px;
+  color: #666;
+}
+.load-status {
+  font-size: 12px;
+  color: var(--secondary);
+  text-align: center;
+  margin: 12px 0;
+}
+body.menu-open {
+  overflow: hidden;
+}
+@media (min-width: 700px) {
+  #appHeader {
+    padding: 26px 42px;
+  }
+  .page {
+    padding: 0 32px;
+    margin-top: 22px;
+  }
+  .home-page {
+    max-width: 900px;
+  }
+  .home-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 64px;
+  }
+  .together {
+    padding: 58px 0 66px;
+  }
+  .message-card {
+    margin-top: 29px;
+    min-height: 220px;
+  }
+  .recent-memory img {
+    height: 210px;
+  }
+  .recent-section > h2 {
+    margin-bottom: 10px;
+  }
+  .recent-copy {
+    padding: 20px 22px;
+  }
+  #mainMenu {
+    padding: 28px 40px;
+  }
+  #mapSection,
+  #restaurantMapSection {
+    padding: 0 42px;
+  }
+  #dateMap,
+  #restaurantMap {
+    height: 480px;
+  }
+}
+@media (min-width: 1100px) {
+  .home-page {
+    max-width: 1080px;
+    padding: 0 72px;
+  }
+  .home-grid {
+    gap: 80px;
+  }
+  .together {
+    padding: 58px 0 76px;
+  }
+  .recent-memory img {
+    height: 220px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+/* Additive settings, clock and private account connection UI. */
+.home-clock {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--secondary);
+  font-size: 11px;
+  padding: 10px 0 0;
+}
+.settings-link {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 22px 0;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  color: #666;
+  font-size: 13px;
+}
+.settings-card {
+  padding: 22px;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+.settings-card h2 {
+  margin-bottom: 12px;
+}
+.settings-card p {
+  font-size: 12px;
+  color: var(--secondary);
+}
+.helper-text {
+  font-size: 12px;
+  color: var(--secondary);
+  margin: 12px 0;
+}
+.settings-card #logoutButton {
+  width: 100%;
+  text-align: left;
+  color: #666;
+  padding: 0;
+}
+.recent-activity {
+  font-size: 12px;
+  margin-top: 32px;
+  color: #666;
+}
+.recent-activity summary {
+  cursor: pointer;
+}
+.recent-activity #activityList {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.recent-activity p {
+  padding: 5px 0;
+}
+#loginBox {
+  grid-template-columns: minmax(0, 342px);
+  align-content: center;
+  gap: 20px;
+}
+.account-link {
+  max-width: 342px;
+  width: 100%;
+  font-size: 12px;
+  color: #888;
+}
+.account-link summary {
+  cursor: pointer;
+  text-align: center;
+}
+.account-link p {
+  margin: 12px 0;
+  line-height: 1.7;
+}
+.account-link label {
+  display: block;
+  margin: 12px 0 6px;
+}
+.account-link input,
+.account-link select {
+  color: #000;
+}
+#linkMessage {
+  overflow-wrap: anywhere;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+#recentMemory:disabled {
+  cursor: default;
+}
+.page :is(p, div, strong, span) {
+  overflow-wrap: anywhere;
+}
+.record-text { white-space: pre-wrap; }
+
+body{position:relative;isolation:isolate}body.home-cover-visible::before{content:"";position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(250,249,247,.82),rgba(250,249,247,.9)),var(--home-cover);background-position:center;background-size:cover;pointer-events:none}#homeCoverPreview:empty{display:none}#homeCoverPreview img{width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-top:14px}#changePasswordForm input{border:1px solid var(--line)}
+/* Compact record cards; whitespace between action buttons is layout, not content. */
+:is(#restaurantList,#watchedList,#datePlanList)>div{padding:14px 16px!important;margin-bottom:10px!important}
+:is(#restaurantList,#watchedList,#datePlanList) .record-actions{display:flex!important;justify-content:flex-end;align-items:center;gap:4px;white-space:normal!important;margin-top:8px!important;line-height:normal}
+:is(#restaurantList,#watchedList,#datePlanList) .record-actions button{margin:0!important;padding:6px 8px!important;min-height:32px;flex:0 0 auto;white-space:nowrap}
+/* Home follows the supplied warm ivory layout, using the explicitly chosen cover. */
+body.home-cover-visible::before{display:none}
+#appHeader.is-home{position:relative;min-height:80px}
+#appHeader.is-home #pageTitle{position:absolute;left:50%;transform:translateX(-50%);margin:0;font:italic 600 22px Georgia,serif;white-space:nowrap}
+#appHeader.is-home #menuButton{order:-1;margin-right:auto}
+.home-page{max-width:960px;padding-top:0}.home-hero{position:relative;border-radius:18px;overflow:hidden;margin:4px 0 14px}
+.home-hero>img{display:block;width:100%;height:clamp(210px,34svh,410px);object-fit:cover;object-position:center}
+.choose-photo{display:block;margin:0 auto 16px;color:#888;font-size:12px}
+.home-summary{display:grid;gap:12px;margin:0 0 20px}.home-page .together{padding:14px;text-align:center;border:1px solid #efe6dd;box-shadow:0 3px 12px #b88b6510}
+.home-page .together h2{font-size:26px;letter-spacing:-.6px}.home-page .together h2::after{content:' ♥';color:#ed96a4}.home-page .anniversary{font-size:10px;margin-top:3px}
+.home-page .home-clock{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;padding:14px;border:1px solid #efe6dd}
+.home-clock #homeDate{font-size:12px;color:#666}.home-clock #homeTime{font-size:25px;font-weight:650;line-height:1.3;color:#111}
+.home-page .home-grid{gap:20px}.home-page .message-card{padding:18px;margin:0;min-height:0;background:#fcebe6}
+.home-page .message-card h2{font-size:14px;margin-bottom:10px;display:flex;justify-content:space-between}.message-card h2>span{font-size:23px;color:#ed96a4}
+.home-page .message-compose{background:transparent;border-color:#e9d9d3}.home-page .message-compose input{background:transparent}
+.home-page .recent-section>h2{text-align:left;font-size:14px;margin:0 0 12px}
+.home-page .recent-memory{border:1px solid #efe6dd;box-shadow:0 2px 10px #b88b6510}.home-page .recent-copy{padding:15px 16px}.recent-copy strong{font-size:13px}
+.home-page .recent-activity{margin-top:22px}.recent-activity time{font-size:10px;color:#999}
+@media(min-width:700px){.home-page{padding-left:42px;padding-right:42px}.home-summary{grid-template-columns:1fr 1fr}.home-page .home-grid{grid-template-columns:1fr 1fr;gap:24px}.home-page .home-hero>img{height:360px}}
+/* October 30: balanced tablet login, right menu and uncropped selected cover. */
+#loginBox{justify-content:center;justify-items:center;grid-template-columns:minmax(0,342px);padding:32px 24px}
+#loginBox .login-form,#loginBox .account-link{width:100%;max-width:342px;margin-left:auto;margin-right:auto}
+#appHeader.is-home #menuButton{order:0;margin-left:auto;margin-right:0}
+.home-page .home-hero>img{height:auto;max-height:min(65svh,600px);object-fit:contain;border-radius:18px}
+.home-page .home-hero{background:transparent}
+#mainMenu{width:calc(100% - 24px);max-width:560px;height:auto;max-height:calc(100dvh - 32px);margin:16px auto;border-radius:28px;padding-bottom:max(28px,env(safe-area-inset-bottom));box-shadow:0 12px 36px #0002}
+#mainMenu .settings-link{border:1px solid #ebe5e0;border-radius:999px;background:#fff;padding:15px 20px;margin:24px 0 12px;box-shadow:0 5px 12px #0000000d;align-items:center}
+.watched-tabs{display:flex;flex-wrap:wrap;gap:4px;background:#efece8;border-radius:20px;padding:5px;margin:0 0 22px}
+.watched-tabs button{flex:1 0 auto;min-height:40px;padding:8px 12px;border-radius:999px;font-size:12px;white-space:nowrap}
+.watched-tabs button[aria-selected="true"]{background:#e8a0ae;color:#fff;box-shadow:0 2px 6px #0000000d}
+
+.next-milestone{color:#888;font-size:11px;margin-top:7px;line-height:1.5}
+.home-search-link{display:block;margin:0 0 14px auto;padding:6px 4px;color:#888;font-size:12px}
+.search-menu-link{display:flex;justify-content:space-between;width:100%;padding:18px 0;font-size:13px;margin-top:16px;border-top:1px solid var(--line)}
+#recordSearchForm{margin:12px 0 18px}#recordSearchForm input{flex:1}#recordSearchForm .primary{width:auto;margin:0;padding:10px 16px}
+.search-result{display:block;width:100%;text-align:left;padding:16px 18px;margin:0 0 12px;overflow-wrap:anywhere}
+.search-result-meta{display:block;font-size:11px;color:#888;margin-bottom:5px}.search-result strong{display:block;font-size:14px}
+.search-result p{font-size:12px;color:#666;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#searchMore{display:block;margin:16px auto;background:#fff}#searchDetail{border:0;border-radius:24px;padding:24px;width:calc(100% - 32px);max-width:560px;max-height:calc(100dvh - 48px);background:var(--bg);box-shadow:0 12px 36px #0002;overflow-y:auto}
+#searchDetail::backdrop{background:#0003}.search-detail-header{display:flex;justify-content:space-between;align-items:center;gap:12px;overflow-wrap:anywhere}.search-detail-header h2{font-size:16px;min-width:0}
+.search-detail-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;margin:6px 0 18px}#searchDetailBody h3{font-size:11px;color:#888}
+.search-highlight{outline:2px solid var(--accent);outline-offset:3px}
+
+body.photo-viewer-open{overflow:hidden}
+#photoViewer{border:0;border-radius:20px;background:#151515;color:#fff;width:calc(100% - 20px);max-width:1100px;max-height:calc(100dvh - 20px);padding:12px;box-shadow:0 10px 40px #0005;overflow:auto}
+#photoViewer::backdrop{background:#000c}.photo-viewer-header{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 8px}
+#closePhotoViewer{color:#fff;font-size:28px;padding:0;width:44px;height:44px}#photoViewerStage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;touch-action:pan-y pinch-zoom}
+#expandedPhoto{display:block;max-width:100%;width:auto;height:auto;max-height:calc(100dvh - 175px);object-fit:contain;border-radius:8px}
+#photoViewerStatus{font-size:13px;text-align:center;padding:10px}.photo-viewer-controls{display:flex;justify-content:center;gap:28px;margin-top:8px}.photo-viewer-controls button{width:52px;height:44px;background:#ffffff16;color:#fff;font-size:28px;padding:0}
+#photoPreview img,#photoboothList img,#photoboothPreview img,#homeHeroImage,#homeCoverPreview img{cursor:zoom-in}
+.game-tabs{display:flex;gap:4px;border-radius:999px;background:#eeeae6;padding:5px;margin-bottom:20px}.game-tabs button{flex:1;min-width:0;min-height:42px;border-radius:999px;padding:8px;font-size:12px;white-space:nowrap}.game-tabs [aria-selected="true"]{background:#e8a0ae;color:#fff;box-shadow:0 2px 6px #0001}
+.game-options{display:flex;gap:12px;align-items:center;font-size:12px;color:#888}.game-options select{flex:1;font-size:12px}.game-options label{flex-shrink:0}.game-status{font-size:12px;min-height:24px;margin:12px 0;color:#666}.game-stage{position:relative;max-width:600px;margin:0 auto}.puzzle-board{display:grid;grid-template-columns:repeat(var(--puzzle-size),minmax(0,1fr));gap:2px}.puzzle-tile{aspect-ratio:1;padding:0;border-radius:4px;background-repeat:no-repeat;border:0;box-shadow:inset 0 0 0 1px #ffffff33}.puzzle-tile[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:-3px}.puzzle-tile:disabled{opacity:1;cursor:default}
+.memory-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.memory-card{position:relative;aspect-ratio:1;overflow:hidden;border-radius:12px;padding:0;background:#f1dfdf;border:1px solid #e8d6d6}.memory-card>span{font-size:24px;color:#c98996}.memory-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;visibility:hidden}.memory-card.face-up img,.memory-card.matched img{visibility:visible}.memory-card:disabled{opacity:1;cursor:default}.memory-card.matched{outline:2px solid #e8a0ae;outline-offset:-2px}
+#gameHint{position:absolute;inset:0;background:#faf9f7;z-index:1}#gameHintImage{width:100%;height:100%;object-fit:contain;border-radius:12px}.game-actions{display:flex;align-items:center;gap:8px;margin-top:18px}.game-actions .primary{margin:0;flex:1;width:auto}.game-actions>button:last-child{font-size:11px;padding:10px;background:#fff}.taste-board{padding:20px;background:#fff;border-radius:18px}.taste-board h3{font-size:17px;margin-bottom:16px}.taste-board p{font-size:12px;color:#888;margin:12px 0}.taste-options{display:grid;gap:10px}.taste-options button{background:#faf9f7;border:1px solid #eee;text-align:left;min-height:48px;padding:12px 16px;border-radius:12px;font-size:13px}.taste-options button.correct-choice{border-color:#e8a0ae;background:#fcebed}.taste-options button.wrong-choice{border-style:dashed}.taste-options button:disabled{opacity:1;cursor:default}
+@media(min-width:700px){#gamesSection{max-width:800px}.memory-board{grid-template-columns:repeat(6,minmax(0,1fr))}.game-tabs button{font-size:14px}.taste-board{padding:30px}}
+
+</style><meta name="theme-color" content="#FAF9F7"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Our Memories"/>
+<link rel="manifest" href="./manifest.webmanifest"/><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2"/>
+</head>
+<body>
+<main class="login-screen" id="loginBox"><form class="login-form" id="loginForm"><h1 class="brand">Jinny <span>♥</span> Wangyu</h1><label class="sr-only" for="loginEmail">이메일 주소</label><input autocomplete="username" id="loginEmail" placeholder="이메일 주소" required="" type="email" autocapitalize="none" spellcheck="false"/><label class="sr-only" for="loginPassword">Password</label><input autocomplete="current-password" id="loginPassword" placeholder="Password" required="" type="password"/><button class="primary" id="loginButton" type="submit">Login</button><p aria-live="polite" id="loginMessage" role="status"></p></form>
+</main>
+<!-- 제목 -->
+
+<!-- 메뉴 -->
+<header hidden="" id="appHeader"><button aria-label="Home" class="icon-button" id="homeButton" onclick="showSection('home')">‹</button><h1 class="brand" id="pageTitle">Jinny <span>♥</span> Wangyu</h1><button aria-controls="mainMenu" aria-expanded="false" aria-label="Open menu" class="icon-button" id="menuButton" onclick="openMenu()">☰</button></header><dialog aria-label="Menu" id="mainMenu"><div class="menu-header"><span class="brand">Jinny <span>♥</span> Wangyu</span><button aria-label="Close menu" class="icon-button" onclick="closeMenu()">×</button></div><nav aria-label="Main navigation"><button onclick="showSection('calendar')">Calendar<span aria-hidden="true">›</span></button><button onclick="showSection('map')">Places<span aria-hidden="true">›</span></button><button onclick="showSection('restaurantMap')">Restaurants<span aria-hidden="true">›</span></button><button onclick="showSection('datePlan')">Date Planner<span aria-hidden="true">›</span></button><button onclick="showSection('watched')">Watched Together<span aria-hidden="true">›</span></button><button onclick="showSection('games')">Mini Games<span aria-hidden="true">›</span></button><button onclick="showSection('letters')">Letters<span aria-hidden="true">›</span></button><button onclick="showSection('photobooth')">Photobooth<span aria-hidden="true">›</span></button><button onclick="showSection('bucket')">Bucket List<span aria-hidden="true">›</span></button><button onclick="showSection('stats')">Monthly Memories<span aria-hidden="true">›</span></button><button onclick="showSection('search')">전체 기록 검색<span aria-hidden="true">›</span></button></nav><button class="settings-link" onclick="showSection('settings')">Settings <span aria-hidden="true">›</span></button></dialog>
+<!-- 데이트 플래너 -->
+<div class="page" id="datePlanSection" style="display: none;">
+
+<div class="editor">
+<label class="field-label" for="planDate">Date</label><input id="planDate" type="date"/>
+<label class="field-label" for="planTitle">Title</label><input id="planTitle" maxlength="100" placeholder="데이트 제목 ♡" type="text"/>
+<label class="field-label" for="planPlace">Place</label><input id="planPlace" maxlength="100" placeholder="어디서 만날까요?" type="text"/>
+<label class="field-label" for="planBudget">Budget</label><input id="planBudget" min="0" placeholder="예상 예산 (원)" type="number"/><label class="field-label" for="planMemo">Memo</label><textarea id="planMemo" maxlength="500" placeholder="하고 싶은 것, 일정 등을 적어보세요 ♡"></textarea>
+
+<label class="check-label"><input aria-label="planCompleted" id="planCompleted" type="checkbox"/>Completed</label><button class="primary" onclick="saveDatePlan()" type="button">저장</button>
+</div>
+<div>
+<h3>Saved Plans</h3>
+<div id="datePlanList"></div>
+</div>
+</div>
+<!-- 같이 본 것 -->
+<div class="page" id="watchedSection" style="display: none;">
+<div class="watched-tabs" role="tablist" aria-label="같이 본 것 분류"><button id="watch-tab-movie" role="tab" aria-selected="true" aria-controls="watchedList" data-watch-category="영화" onclick="setWatchedCategory('영화')">영화</button><button id="watch-tab-series" role="tab" aria-selected="false" aria-controls="watchedList" data-watch-category="드라마" onclick="setWatchedCategory('드라마')">드라마</button><button id="watch-tab-stage" role="tab" aria-selected="false" aria-controls="watchedList" data-watch-category="뮤지컬 및 연극" onclick="setWatchedCategory('뮤지컬 및 연극')"><span aria-hidden="true">🎭</span> 뮤지컬 및 연극</button><button id="watch-tab-show" role="tab" aria-selected="false" aria-controls="watchedList" data-watch-category="예능" onclick="setWatchedCategory('예능')">예능</button><button id="watch-tab-other" role="tab" aria-selected="false" aria-controls="watchedList" data-watch-category="기타" onclick="setWatchedCategory('기타')">기타</button></div>
+
+<div class="editor">
+<label class="field-label" for="watchDate">Date</label><input id="watchDate" type="date"/>
+<label class="field-label" for="contentType">Type</label><select id="contentType">
+<option value="">종류 선택</option>
+<option value="영화">🎬 영화</option>
+<option value="드라마">📺 드라마</option>
+<option value="뮤지컬 및 연극">🎭 뮤지컬 및 연극</option>
+<option value="예능">😂 예능</option>
+<option value="기타">💿 기타</option>
+</select>
+<label class="field-label" for="contentTitle">Title</label><input id="contentTitle" maxlength="100" placeholder="제목" type="text"/>
+<label class="field-label" for="contentRating">Rating</label><select id="contentRating">
+<option value="">별점 선택 ★</option>
+<option value="5">★ 5.0</option>
+<option value="4.5">★ 4.5</option>
+<option value="4">★ 4.0</option>
+<option value="3.5">★ 3.5</option>
+<option value="3">★ 3.0</option>
+<option value="2.5">★ 2.5</option>
+<option value="2">★ 2.0</option>
+<option value="1.5">★ 1.5</option>
+<option value="1">★ 1.0</option>
+<option value="0.5">★ 0.5</option>
+</select>
+<label class="field-label" for="contentReview">Review</label><textarea id="contentReview" maxlength="500" placeholder="같이 본 소감이나 한줄평을 남겨보세요 ♡"></textarea>
+<button class="primary" onclick="saveWatchedContent()" type="button">저장</button>
+</div>
+<div>
+<h3>Watched Together</h3>
+<div id="watchedList"></div>
+</div>
+</div>
+<!-- 편지 -->
+<div class="page" id="lettersSection" style="display: none;">
+
+<div class="editor">
+<label class="field-label" for="letterDate">Date</label><input id="letterDate" type="date"/>
+<label class="field-label" for="letterWriter">Writer</label><select id="letterWriter">
+<option value="">작성자 선택</option>
+<option value="Jinny">Jinny</option>
+<option value="Wangyu">Wangyu</option>
+</select>
+<label class="field-label" for="letterTitle">Title</label><input id="letterTitle" placeholder="편지 제목" type="text"/>
+<label class="field-label" for="letterContent">Content</label><textarea id="letterContent" placeholder="마음을 담아 편지를 써보세요 ♡"></textarea>
+<button class="primary" onclick="saveLetter()" type="button">저장</button>
+</div>
+<h3 class="list-heading">Saved Letters</h3><div id="lettersList"></div>
+</div>
+<!-- 포토부스 -->
+<div class="page" id="photoboothSection" style="display: none;">
+
+<div class="editor">
+<label class="field-label" for="photoboothDate">Date</label><input id="photoboothDate" type="date"/>
+<label class="field-label" for="photoboothTitle">Title</label><input id="photoboothTitle" placeholder="제목 (예: 성수 인생네컷)" type="text"/>
+<label class="upload-label" for="photoboothPhoto">＋ 사진 추가</label><input accept="image/*" id="photoboothPhoto" type="file"/><div class="photo-preview" id="photoboothPreview"></div>
+<label class="field-label" for="photoboothMemo">Memo</label><textarea id="photoboothMemo" placeholder="사진에 대한 추억을 남겨보세요 ♡"></textarea>
+<button class="primary" onclick="savePhotobooth()" type="button">저장</button>
+</div>
+<h3 class="list-heading">Saved Photos</h3><div id="photoboothList"></div>
+</div>
+<!-- 첫 화면 -->
+<main class="home-page page" id="homeSection" style="display:none">
+<section id="homeHero" class="home-hero" hidden><img id="homeHeroImage" alt="직접 선택한 우리 대표 사진"/></section>
+<button id="chooseHomePhoto" class="choose-photo" onclick="showSection('settings')">＋ 대표 사진 선택</button>
+<button class="home-search-link" onclick="showSection('search')">⌕ 전체 기록 검색</button><div class="home-summary"><section class="together card"><p>우리가 함께한 지</p><h2 id="dDayCount"></h2><p class="anniversary">2026.02.19 —</p><p id="nextMilestone" class="next-milestone"></p></section><section class="home-clock card" aria-label="Current time in Seoul"><time id="homeDate"></time><time id="homeTime"></time></section></div>
+<div class="home-grid"><section class="message-card card"><h2>오늘의 한마디 <span aria-hidden="true">♡</span></h2><div aria-live="polite" id="todayMessages"></div><form class="message-compose" id="messageForm"><label class="sr-only" for="todayMessageInput">Today's message</label><input id="todayMessageInput" maxlength="100" placeholder="오늘의 한마디"/><button aria-label="Save message" class="icon-button" type="submit">↗</button></form></section><section class="recent-section"><h2>최근 추억</h2><button class="recent-memory card" disabled id="recentMemory"><span class="empty-state">아직 저장된 추억이 없어요.</span></button></section></div>
+<details id="recentActivity" class="recent-activity"><summary>Recent Activity</summary><div id="activityList" aria-live="polite"></div></details></main>
+<!-- 캘린더 -->
+<div class="page calendar" id="calendarSection">
+<!-- 월 이동 -->
+<div class="month">
+<button aria-label="Previous month" class="icon-button" onclick="previousMonth()">‹</button>
+<h2 id="monthTitle"></h2>
+<button aria-label="Next month" class="icon-button" onclick="nextMonth()">›</button>
+</div>
+<!-- 요일 -->
+<div class="weekdays">
+<div>SUN</div>
+<div>MON</div>
+<div>TUE</div>
+<div>WED</div>
+<div>THU</div>
+<div>FRI</div>
+<div>SAT</div>
+</div>
+<!-- 날짜 -->
+<div class="days" id="days"></div>
+<!-- 기록창 -->
+<div class="memory-box editor" id="memoryBox"><div class="memory-heading"><h3 id="selectedDate"></h3><button class="heart-button" id="heartButton" onclick="toggleHeart()">
+                ♡ 데이트한 날로 표시
+            </button></div><div class="search-row">
+<input aria-label="장소를 검색해보세요 ♡" id="placeSearch" placeholder="장소를 검색해보세요 ♡" type="text"/>
+<button onclick="searchPlace()" type="button">
+        검색
+    </button>
+</div><div id="placeResults" style="display: none;"></div><label class="field-label" for="memoryText">Memo</label><textarea id="memoryText" placeholder="오늘의 데이트를 기록해보세요 ♡">
+            </textarea><label class="upload-label" for="photoInput">＋ 사진 추가</label><input accept="image/*" class="photo-input" id="photoInput" multiple="" onchange="previewPhotos()" type="file"/><div class="photo-preview" id="photoPreview">
+</div><button class="primary" onclick="saveMemory()">저장</button></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SUPABASE_URL = "https://dodhjzwuwcxnfnjpmzpv.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_EtKU2vJPk1JWuiL6R2nK3Q_itiK310R";
+
+    const supabaseClient = window.supabase ? supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    ) : null;
+    async function login() { return AppAuth.login(); }
+</script>
+<script>
+
+        // 현재 보고 있는 달
+        let calendarLoadVersion = 0;
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+
+        // 현재 선택한 날짜
+        let selectedDate = "";
+
+        // 하트 상태
+        let heartActive = false;
+
+        // 현재 선택한 사진들
+        let selectedPhotos = [];
+        let savedMemoryPhotoPaths = [];
+        let savedMemoryPreviewUrls = [];
+        let newMemoryPhotoData = [];
+        let memoryPhotosLoaded = false;
+        let memoryPreviewVersion = 0;
+        let pendingMemoryPhotoReads = 0;
+        let memoryPhotoReadFailed = false;
+        let memoryLoadVersion = 0;
+        // 현재 선택한 장소
+let selectedPlaceName = "";
+let selectedPlaceAddress = "";
+let selectedLatitude = null;
+let selectedLongitude = null;
+
+        // =========================
+        // 달력 만들기
+        // =========================
+
+async function createCalendar() {
+    const loadVersion = ++calendarLoadVersion;
+
+    const daysContainer =
+        document.getElementById("days");
+
+    daysContainer.innerHTML = "";
+
+    document.getElementById("monthTitle").innerText =
+        formatMonth(currentYear, currentMonth);
+
+
+    // Supabase에서 이번 달 하트 가져오기
+    const monthStart =
+        currentYear + "-" +
+        String(currentMonth + 1).padStart(2, "0") +
+        "-01";
+
+    const monthEnd =
+        currentYear + "-" +
+        String(currentMonth + 1).padStart(2, "0") +
+        "-" +
+        String(
+            new Date(
+                currentYear,
+                currentMonth + 1,
+                0
+            ).getDate()
+        ).padStart(2, "0");
+
+
+    const { data: supabaseData, error } =
+        await supabaseClient
+            .from("memories")
+            .select("date, heart")
+            .gte("date", monthStart)
+            .lte("date", monthEnd);
+    if (loadVersion !== calendarLoadVersion) return;
+
+
+    if (error) {
+        reportOperationError();
+    }
+
+
+    // 빈칸
+    const firstDay =
+        new Date(
+            currentYear,
+            currentMonth,
+            1
+        ).getDay();
+
+    for (let i = 0; i < firstDay; i++) {
+
+        const empty =
+            document.createElement("div");
+
+        empty.className = "empty";
+
+        daysContainer.appendChild(empty);
+    }
+
+
+    // 날짜
+    const lastDate =
+        new Date(
+            currentYear,
+            currentMonth + 1,
+            0
+        ).getDate();
+
+
+    for (let day = 1; day <= lastDate; day++) {
+
+        const dayElement =
+            document.createElement("div");
+
+        dayElement.className = "day";
+
+
+        const number =
+            document.createElement("span");
+
+        number.innerText = day;
+
+        dayElement.appendChild(number);
+
+
+        const dateKey =
+            currentYear + "-" +
+            String(currentMonth + 1).padStart(2, "0") +
+            "-" +
+            String(day).padStart(2, "0");
+
+
+        // Supabase에서 해당 날짜 찾기
+        const savedData =
+            supabaseData
+                ? supabaseData.find(
+                    item => item.date === dateKey
+                )
+                : null;
+
+
+        // 하트 표시
+        if (savedData && savedData.heart) {
+
+            const heart =
+                document.createElement("span");
+
+            heart.className = "heart";
+
+            heart.innerText = "♥";
+
+            dayElement.appendChild(heart);
+        }
+
+
+        // 날짜 클릭
+        dayElement.onclick = function() {
+
+            openMemory(dateKey);
+
+        };
+
+
+        daysContainer.appendChild(dayElement);
+    }
+}
+
+        // =========================
+        // 이전 달
+        // =========================
+
+        function previousMonth() {
+
+            currentMonth--;
+
+            if (currentMonth < 0) {
+
+                currentMonth = 11;
+
+                currentYear--;
+            }
+
+            createCalendar();
+        }
+
+
+        // =========================
+        // 다음 달
+        // =========================
+
+        function nextMonth() {
+
+            currentMonth++;
+
+            if (currentMonth > 11) {
+
+                currentMonth = 0;
+
+                currentYear++;
+            }
+
+            createCalendar();
+        }
+
+        async function openMemory(date) {
+    const openVersion = ++memoryLoadVersion;
+    memoryPhotosLoaded = false;
+    pendingMemoryPhotoReads = 0; memoryPhotoReadFailed = false;
+    savedMemoryPhotoPaths = [];
+    savedMemoryPreviewUrls = [];
+    newMemoryPhotoData = [];
+
+    selectedDate = date;
+
+    document.getElementById("memoryBox")
+        .style.display = "block";
+
+    const dateParts =
+        date.split("-");
+
+    document.getElementById("selectedDate")
+        .innerText =
+        dateParts[0] + "년 " +
+        Number(dateParts[1]) + "월 " +
+        Number(dateParts[2]) + "일";
+
+
+    const { data, error } =
+    await supabaseClient
+        .from("memories")
+        .select("text, heart, place_name, place_address, latitude, longitude")
+        .eq("date", date)
+        .limit(1);
+
+    if (openVersion !== memoryLoadVersion) return;
+    if (error) {
+        reportOperationError();
+        alert("메모를 불러오지 못했어요.");
+        return;
+    }
+
+
+    if (data && data.length > 0) {
+
+    document.getElementById("memoryText")
+        .value =
+        data[0].text || "";
+
+    heartActive =
+        data[0].heart || false;
+
+    // 저장된 장소 불러오기
+    selectedPlaceName =
+        data[0].place_name || "";
+
+    selectedPlaceAddress =
+        data[0].place_address || "";
+
+    selectedLatitude =
+        data[0].latitude || null;
+
+    selectedLongitude =
+        data[0].longitude || null;
+
+    // 장소 검색창에 표시
+    document.getElementById("placeSearch")
+        .value = selectedPlaceName;
+
+    const placeResults =
+        document.getElementById("placeResults");
+
+    if (selectedPlaceName) {
+
+        placeResults.style.display = "block";
+
+        placeResults.innerHTML = `
+            <div style="
+                padding:12px;
+                background:#fff7f8;
+                border-radius:10px;
+            ">
+                <strong>${escapeHTML(selectedPlaceName)}</strong><br>
+                <span style="
+                    font-size:13px;
+                    color:#888;
+                ">
+                    ${escapeHTML(selectedPlaceAddress)}
+                </span>
+            </div>
+        `;
+
+    } else {
+
+        placeResults.innerHTML = "";
+        placeResults.style.display = "none";
+    }
+
+} else {
+
+    document.getElementById("memoryText")
+        .value = "";
+
+    heartActive = false;
+
+    // 장소 초기화
+    selectedPlaceName = "";
+    selectedPlaceAddress = "";
+    selectedLatitude = null;
+    selectedLongitude = null;
+
+    document.getElementById("placeSearch")
+        .value = "";
+
+    document.getElementById("placeResults")
+        .innerHTML = "";
+
+    document.getElementById("placeResults")
+        .style.display = "none";
+}
+
+    // Supabase에 저장된 사진 불러오기
+const { data: memoryData, error: photoError } =
+    await supabaseClient
+        .from("memories")
+        .select("photos")
+        .eq("date", date)
+        .limit(1);
+
+if (openVersion !== memoryLoadVersion) return;
+memoryPhotosLoaded = !photoError;
+if (photoError) {
+    reportOperationError();
+    selectedPhotos = [];
+} else if (memoryData && memoryData.length > 0) {
+    const photoNames = memoryData[0].photos || [];
+    savedMemoryPhotoPaths = photoNames.slice();
+
+    selectedPhotos = [];
+
+    for (const fileName of photoNames) {
+        const { data: imageData, error: imageError } =
+            await supabaseClient
+                .storage
+                .from("photos")
+                .download(fileName);
+
+        if (openVersion !== memoryLoadVersion) return;
+        if (imageError) {
+            reportOperationError();
+            continue;
+        }
+
+        const imageUrl = URL.createObjectURL(imageData);
+        selectedPhotos.push(imageUrl);
+    }
+} else {
+    selectedPhotos = [];
+}
+
+savedMemoryPreviewUrls = selectedPhotos.slice();
+updateHeartButton();
+showSavedPhotos();
+}
+
+        function toggleHeart() {
+
+            heartActive = !heartActive;
+
+            updateHeartButton();
+        }
+
+
+        function updateHeartButton() {
+
+            const button =
+                document.getElementById("heartButton");
+
+
+            if (heartActive) {
+
+                button.innerText =
+                    "♥ 데이트한 날로 표시됨";
+
+                button.classList.add("active");
+
+            } else {
+
+                button.innerText =
+                    "♡ 데이트한 날로 표시";
+
+                button.classList.remove("active");
+            }
+        }
+
+
+        // =========================
+        // 사진 미리보기
+        // =========================
+
+        function previewPhotos() {
+            const previewVersion = ++memoryPreviewVersion;
+            const recordVersion = memoryLoadVersion;
+
+            const input =
+                document.getElementById("photoInput");
+
+
+            const files =
+                Array.from(input.files);
+
+
+            selectedPhotos = savedMemoryPreviewUrls.slice();
+             newMemoryPhotoData = [];
+             pendingMemoryPhotoReads = files.length; memoryPhotoReadFailed = false;
+             showPhotos();
+
+
+            files.forEach(function(file) {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload = function(event) {
+                    if (previewVersion !== memoryPreviewVersion || recordVersion !== memoryLoadVersion) return;
+                    pendingMemoryPhotoReads--;
+                    newMemoryPhotoData.push(event.target.result);
+
+                    selectedPhotos.push(
+                        event.target.result
+                    );
+
+
+                    showPhotos();
+
+                };
+
+
+                reader.onerror = function() { if (previewVersion !== memoryPreviewVersion || recordVersion !== memoryLoadVersion) return; pendingMemoryPhotoReads--; memoryPhotoReadFailed = true; alert("사진을 읽지 못했어요. 파일을 다시 선택해 주세요."); };
+                reader.readAsDataURL(file);
+
+            });
+        }
+
+
+        // 사진 화면에 보여주기
+        function showPhotos() {
+
+            const preview =
+                document.getElementById("photoPreview");
+
+
+            preview.innerHTML = "";
+
+
+            selectedPhotos.forEach(function(photo) {
+
+                const image =
+                    document.createElement("img");
+
+                image.src = photo;
+
+                preview.appendChild(image);
+
+            });
+        }
+
+
+        // 저장된 사진 보여주기
+        function showSavedPhotos() {
+
+            showPhotos();
+
+        }
+
+
+        // =========================
+        // 기록 저장
+        // =========================
+// 카카오 장소 검색
+function searchPlace() {
+    if (!window.kakao?.maps?.services) { alert("지도 서비스를 불러오지 못했어요. 연결을 확인해 주세요."); return; }
+    const keyword = document.getElementById("placeSearch").value.trim();
+
+    if (!keyword) {
+        alert("장소를 입력해주세요.");
+        return;
+    }
+
+    const ps = new kakao.maps.services.Places();
+
+    ps.keywordSearch(keyword, function(data, status) {
+
+        const results = document.getElementById("placeResults");
+        results.innerHTML = "";
+        results.style.display = "block";
+
+        if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            results.innerHTML = "<p>검색 결과가 없어요.</p>";
+            return;
+        }
+
+        if (status !== kakao.maps.services.Status.OK) {
+            results.innerHTML = "<p>장소 검색에 실패했어요.</p>";
+            return;
+        }
+
+        data.slice(0, 5).forEach(function(place) {
+
+            const item = document.createElement("div");
+
+            item.style.padding = "12px";
+            item.style.borderBottom = "1px solid #eee";
+            item.style.cursor = "pointer";
+
+            item.innerHTML = `
+                <strong>${escapeHTML(place.place_name)}</strong>
+                <br>
+                <span style="font-size:13px; color:#888;">
+                    ${escapeHTML(place.road_address_name || place.address_name)}
+                </span>
+            `;
+
+            item.onclick = function() {
+                selectedPlaceName = place.place_name;
+                selectedPlaceAddress =
+                    place.road_address_name || place.address_name;
+                selectedLatitude = Number(place.y);
+                selectedLongitude = Number(place.x);
+
+                document.getElementById("placeSearch").value =
+                    selectedPlaceName;
+
+                results.innerHTML = `
+                    <div style="
+                        padding:12px;
+                        background:#fff7f8;
+                        border-radius:10px;
+                    ">
+                        <strong>${escapeHTML(selectedPlaceName)}</strong><br>
+                        <span style="font-size:13px; color:#888;">
+                            ${escapeHTML(selectedPlaceAddress)}
+                        </span>
+                    </div>
+                `;
+
+
+            };
+
+            results.appendChild(item);
+        });
+    });
+}
+async function saveMemory() {
+    if (pendingMemoryPhotoReads > 0 || memoryPhotoReadFailed) { alert(memoryPhotoReadFailed ? "사진을 다시 선택한 뒤 저장해 주세요." : "사진을 준비하는 중이에요. 잠시 후 다시 저장해 주세요."); return; }
+    if (!selectedDate || !memoryPhotosLoaded) { alert("기존 사진 정보를 확인하지 못했어요. 날짜를 다시 연 뒤 저장해 주세요. 입력한 내용은 유지됩니다."); return; }
+
+    const text = document.getElementById("memoryText").value;
+
+    try {
+        // 1. 사진을 Supabase Storage에 업로드
+        const uploadedPhotos = savedMemoryPhotoPaths.slice();
+
+        for (let i = 0; i < newMemoryPhotoData.length; i++) {
+            const photo = newMemoryPhotoData[i];
+
+            const response = await fetch(photo);
+            const blob = await response.blob();
+
+            const photoType = blob.type || "application/octet-stream";
+            const photoExtension = ({"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","image/heic":"heic","image/heif":"heif","image/avif":"avif"})[photoType] || "bin";
+            const fileName = selectedDate + "-" + uniquePhotoId() + "-" + i + "." + photoExtension;
+
+            const { error: uploadError } =
+                await supabaseClient
+                    .storage
+                    .from("photos")
+                    .upload(fileName, blob, {
+                        contentType: photoType,
+                        upsert: false
+                    });
+
+            if (uploadError) {
+                reportOperationError();
+                alert("사진 업로드 실패");
+                return;
+            }
+
+            uploadedPhotos.push(fileName);
+        }
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+if (!user) {
+    alert("로그인이 필요해요.");
+    return;
+}
+
+        // 3. 기존 기록이 있는지 확인
+        const { data: existing, error: selectError } =
+            await supabaseClient
+                .from("memories")
+                .select("id")
+                .eq("date", selectedDate)
+                .limit(1);
+
+        if (selectError) {
+            reportOperationError();
+            alert("Supabase 확인 실패");
+            return;
+        }
+
+        // 4. 기존 기록이면 수정
+        if (existing.length > 0) {
+
+            const { error } =
+                await supabaseClient
+                    .from("memories")
+                    .update({
+    heart: heartActive,
+    text: text,
+    photos: uploadedPhotos,
+
+    place_name: selectedPlaceName,
+    place_address: selectedPlaceAddress,
+    latitude: selectedLatitude,
+    longitude: selectedLongitude,
+})
+                    .eq("id", existing[0].id)
+
+            if (error) {
+                reportOperationError();
+                alert("Supabase 저장 실패");
+                return;
+            }
+
+        } else {
+
+            // 5. 새 기록이면 추가
+            const { error } =
+                await supabaseClient
+                    .from("memories")
+                    .insert({
+    date: selectedDate,
+    user_id: user.id,
+    heart: heartActive,
+    text: text,
+    photos: uploadedPhotos,
+
+    place_name: selectedPlaceName,
+    place_address: selectedPlaceAddress,
+    latitude: selectedLatitude,
+    longitude: selectedLongitude,
+
+});
+
+            if (error) {
+                reportOperationError();
+                alert("Supabase 저장 실패");
+                return;
+            }
+        }
+
+        savedMemoryPhotoPaths = uploadedPhotos.slice();
+        savedMemoryPreviewUrls = selectedPhotos.slice();
+        newMemoryPhotoData = [];
+        document.getElementById("photoInput").value = "";
+        DraftGuard.clean("calendar");
+        alert("기록이 저장됐어요 ♡");
+        createCalendar();
+
+  } catch (error) {
+    reportOperationError();
+
+    alert("저장 중 오류가 발생했어요. 연결과 접근 권한을 확인해 주세요.");
+}
+}
+        // =========================
+        // 저장된 기록 가져오기
+        // =========================
+
+        function getMemory(date) {
+
+            const data =
+                localStorage.getItem(date);
+
+
+            if (!data) {
+
+                return null;
+            }
+
+
+            try {
+
+                return JSON.parse(data);
+
+            } catch {
+
+                return null;
+            }
+        }
+
+
+        // Calendar is loaded after authentication.
+async function loadBucketList() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("date_bucket_list")
+            .select("id, title, done")
+            .order("created_at", { ascending: true });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("bucketList");
+
+    list.innerHTML = "";
+
+    data.forEach(function(item) {
+
+        const div =
+            document.createElement("div");
+
+        div.dataset.recordId = String(item.id);
+        div.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #fff7f8;
+            border-radius: 10px;
+        `;
+
+        div.innerHTML = `
+            <span style="
+                font-size: 18px;
+                cursor: pointer;
+            "
+            onclick="toggleBucketItem(${item.id}, ${item.done})">
+                ${item.done ? "☑️" : "⬜"}
+            </span>
+
+            <span style="
+                flex: 1;
+                ${item.done ? "text-decoration: line-through; color: #aaa;" : ""}
+            ">
+                ${escapeHTML(item.title)}
+            </span>
+
+            <button
+                onclick="deleteBucketItem(${item.id})"
+                style="
+                    border: none;
+                    background: none;
+                    color: #aaa;
+                    cursor: pointer;
+                "
+            >
+                삭제
+            </button>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+
+async function addBucketItem() {
+
+    const input =
+        document.getElementById("bucketInput");
+
+    const title =
+        input.value.trim();
+
+    if (!title) {
+        alert("데이트를 입력해주세요.");
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("date_bucket_list")
+            .insert({
+                title: title,
+                done: false
+            });
+
+    if (error) {
+        reportOperationError();
+        alert("요청을 처리하지 못했어요. 연결과 접근 권한을 확인해 주세요.");
+        return;
+    }
+
+    input.value = "";
+
+DraftGuard.clean("bucket");
+    loadBucketList();
+}
+
+
+async function toggleBucketItem(id, currentDone) {
+
+    const { error } =
+        await supabaseClient
+            .from("date_bucket_list")
+            .update({
+                done: !currentDone
+            })
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    loadBucketList();
+}
+
+
+async function deleteBucketItem(id) {
+
+    const { error } =
+        await supabaseClient
+            .from("date_bucket_list")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    loadBucketList();
+}
+async function deleteBucketItem(id) {
+
+    const { error } =
+        await supabaseClient
+            .from("date_bucket_list")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    loadBucketList();
+}
+function updateDDay() {
+    const days = relationshipDays();
+    document.getElementById("dDayCount").innerText = "D+" + days;
+}
+
+// Clock and D-Day initialize together after all helpers are available.
+
+async function saveTodayMessage() {
+    const input =
+        document.getElementById("todayMessageInput");
+
+    const message = input.value.trim();
+
+    if (!message) {
+        alert("한마디를 입력해주세요 ♡");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+    const today =
+        seoulISODate();
+
+    const { data: existing, error: selectError } =
+        await supabaseClient
+            .from("daily_messages")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("message_date", today)
+            .maybeSingle();
+
+    if (selectError) {
+        reportOperationError();
+        alert("저장 중 오류가 발생했어요.");
+        return;
+    }
+
+    let error;
+
+    if (existing) {
+        const result =
+            await supabaseClient
+                .from("daily_messages")
+                .update({
+                    message: message
+                })
+                .eq("id", existing.id);
+
+        error = result.error;
+    } else {
+        const result =
+            await supabaseClient
+                .from("daily_messages")
+                .insert({
+                    user_id: user.id,
+                    message: message,
+                    message_date: today
+                });
+
+        error = result.error;
+    }
+
+    if (error) {
+        reportOperationError();
+        alert("저장 중 오류가 발생했어요.");
+        return;
+    }
+    input.value = "";
+DraftGuard.clean("home");
+    await loadTodayMessages();
+    alert("오늘의 한마디를 남겼어요 ♡");
+}
+async function loadTodayMessages() {
+    const today =
+        seoulISODate();
+
+    const { data, error } =
+        await supabaseClient
+            .from("daily_messages")
+            .select("user_id, message")
+            .eq("message_date", today)
+            .order("created_at", { ascending: true });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const box =
+        document.getElementById("todayMessages");
+
+    if (!data || data.length === 0) {
+        box.innerHTML =
+            "아직 오늘의 한마디가 없어요 ♡";
+        return;
+    }
+
+    box.innerHTML = "";
+
+    data.forEach(function(item) {
+        const writerName = getWriterName(item);
+        const message =
+            document.createElement("div");
+
+        message.style.marginBottom = "8px";
+        message.style.padding = "10px";
+        message.style.background = "#fff7f8";
+        message.style.borderRadius = "10px";
+
+        message.textContent =
+            writerName + " : " + item.message;
+        box.appendChild(message);
+    });
+}
+
+function getWriterName(item) {
+        let writerName = "우리";
+
+if (item.user_id === "d98749c7-b4ae-4da7-914a-daec9ec8158b") {
+    writerName = "Doyoung";
+} else if (item.user_id === "4a24c5dd-ac91-42ab-9715-ddbe41d6e6c0") {
+    writerName = "Hwain";
+}
+    return writerName;
+}
+
+function showSection(section) {
+    if (typeof DraftGuard !== "undefined" && section !== currentPage && !DraftGuard.allow()) return false;
+    if (!document.body.classList.contains("authenticated")) return;
+    if (typeof PhotoGames !== "undefined" && currentPage === "games" && section !== "games") PhotoGames.leave();
+    updatePageHeader(section);
+
+    // 모든 화면 숨기기
+
+    document.getElementById("homeSection").style.display =
+        section === "home" ? "block" : "none";
+
+    document.querySelector(".calendar").style.display =
+        section === "calendar" ? "block" : "none";
+
+    document.getElementById("mapSection").style.display =
+        section === "map" ? "block" : "none";
+
+    document.getElementById("restaurantMapSection").style.display =
+    section === "restaurantMap" ? "block" : "none";
+
+    document.getElementById("datePlanSection").style.display =
+    section === "datePlan" ? "block" : "none";
+
+    document.getElementById("watchedSection").style.display =
+    section === "watched" ? "block" : "none";
+
+    document.getElementById("lettersSection").style.display =
+    section === "letters" ? "block" : "none";
+
+    document.getElementById("photoboothSection").style.display =
+    section === "photobooth" ? "block" : "none";
+
+    document.getElementById("bucketSection").style.display =
+        section === "bucket" ? "block" : "none";
+
+    document.getElementById("statsSection").style.display =
+        section === "stats" ? "block" : "none";
+
+
+    document.getElementById("settingsSection").style.display = section === "settings" ? "block" : "none";
+    if (section === "settings") renderSettings();
+
+    document.getElementById("searchSection").style.display = section === "search" ? "block" : "none";
+    if (section === "search") document.getElementById("recordSearchInput").focus({preventScroll:true});
+
+    document.getElementById("gamesSection").style.display = section === "games" ? "block" : "none";
+    if (section === "games") PhotoGames.enter();
+
+    // 각 화면 필요한 데이터 불러오기
+
+    if (section === "map") {
+        showMap();
+    }
+
+    if (section === "restaurantMap") {
+    showRestaurantMap();
+    loadRestaurantList();
+}
+    if (section === "datePlan") {
+    loadDatePlans();
+}
+    if (section === "watched") {
+    loadWatchedContents();
+}
+    if (section === "letters") {
+    loadLetters();
+}
+    if (section === "photobooth") {
+    loadPhotobooth();
+}
+
+    if (section === "bucket") {
+        loadBucketList();
+    }
+
+    if (section === "stats") {
+        loadMonthlyStats();
+    }
+
+}
+let statsYear = new Date().getFullYear();
+let statsMonth = new Date().getMonth();
+
+async function loadMonthlyStats() {
+
+    const monthStart =
+        statsYear + "-" +
+        String(statsMonth + 1).padStart(2, "0") +
+        "-01";
+
+    const lastDay =
+        new Date(
+            statsYear,
+            statsMonth + 1,
+            0
+        ).getDate();
+
+    const monthEnd =
+        statsYear + "-" +
+        String(statsMonth + 1).padStart(2, "0") +
+        "-" +
+        String(lastDay).padStart(2, "0");
+
+
+    // 화면의 월 표시
+    document.getElementById("statsMonthTitle").innerText =
+        formatMonth(statsYear, statsMonth);
+
+
+    // Supabase에서 해당 월 기록 가져오기
+    const { data, error } =
+        await supabaseClient
+            .from("memories")
+            .select(
+                "date, heart, place_name, photos, text"
+            )
+            .gte("date", monthStart)
+            .lte("date", monthEnd);
+
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+
+    // 데이트한 날
+    const dateCount =
+        data.filter(item => item.heart).length;
+
+
+    // 장소가 기록된 날
+    const placeData =
+        data.filter(item =>
+            item.place_name
+        );
+
+    const placeCount =
+        new Set(
+            placeData.map(item => item.place_name)
+        ).size;
+
+
+    // 사진이 있는 날
+    const photoCount =
+        data.filter(item =>
+            item.photos &&
+            item.photos.length > 0
+        ).length;
+
+
+    // 메모가 있는 날
+    const memoCount =
+        data.filter(item =>
+            item.text &&
+            item.text.trim() !== ""
+        ).length;
+
+
+    // 숫자 표시
+    document.getElementById("statsDateCount")
+        .innerText = dateCount + "일";
+
+    document.getElementById("statsPlaceCount")
+        .innerText = placeCount + "곳";
+
+    document.getElementById("statsPhotoCount")
+        .innerText = photoCount + "일";
+
+    document.getElementById("statsMemoCount")
+        .innerText = memoCount + "일";
+
+
+    // 장소 목록
+    const placesElement =
+        document.getElementById("statsPlaces");
+
+    const uniquePlaces =
+        [...new Set(
+            placeData.map(item => item.place_name)
+        )];
+
+
+    if (uniquePlaces.length === 0) {
+
+        placesElement.innerText =
+            "아직 기록된 장소가 없어요.";
+
+    } else {
+
+        placesElement.innerHTML =
+            uniquePlaces
+                .map(place => escapeHTML(place))
+                .join("<br>");
+    }
+}
+function changeStatsMonth(direction) {
+
+    statsMonth += direction;
+
+    if (statsMonth < 0) {
+        statsMonth = 11;
+        statsYear--;
+    }
+
+    if (statsMonth > 11) {
+        statsMonth = 0;
+        statsYear++;
+    }
+
+    loadMonthlyStats();
+}
+</script>
+<!-- 데이트 버킷리스트 -->
+<div class="page" id="bucketSection" style="display: none;">
+
+<div class="editor">
+<input aria-label="하고 싶은 데이트를 적어보세요 ♡" id="bucketInput" placeholder="하고 싶은 데이트를 적어보세요 ♡" type="text"/>
+<button onclick="addBucketItem()" type="button">
+            추가
+        </button>
+</div>
+<div id="bucketList"></div>
+</div>
+
+<!-- 지도 화면 -->
+<div class="page" id="mapSection" style="display: none;">
+
+<div id="dateMap"></div><div aria-live="polite" class="place-detail" id="placeDetail"><p class="empty-state">마커를 눌러 추억을 확인하세요.</p></div>
+</div>
+<!-- 맛집 지도 화면 -->
+<div class="page" id="restaurantMapSection" style="display: none;">
+
+<div id="restaurantMap"></div>
+<!-- 새 맛집 기록 -->
+<div class="editor">
+
+<!-- 방문 날짜 -->
+
+<!-- 맛집 검색 -->
+<div class="search-row">
+<input aria-label="맛집을 검색해보세요 ♡" id="restaurantPageSearch" placeholder="맛집을 검색해보세요 ♡" type="text"/>
+<button onclick="searchRestaurantPage()" type="button">
+            검색
+        </button>
+</div>
+<div id="restaurantPageResults" style="display: none;"></div><label class="field-label" for="restaurantDate">Visit Date</label><input id="restaurantDate" type="date"/>
+<!-- 별점 -->
+<label class="field-label" for="restaurantPageRating">Rating</label><select id="restaurantPageRating">
+<option value="">★ 별점 선택</option>
+<option value="5">5.0</option>
+<option value="4.5">4.5</option>
+<option value="4">4.0</option>
+<option value="3.5">3.5</option>
+<option value="3">3.0</option>
+<option value="2.5">2.5</option>
+<option value="2">2.0</option>
+<option value="1.5">1.5</option>
+<option value="1">1.0</option>
+<option value="0.5">0.5</option>
+</select>
+<!-- 메모 / 한줄평 -->
+<label class="field-label" for="restaurantReview">Review</label><textarea id="restaurantReview" maxlength="300" placeholder="먹은 메뉴나 한줄평을 남겨보세요 ♡"></textarea>
+<button class="primary" onclick="saveRestaurantPage()" type="button">저장</button>
+</div>
+<!-- 맛집 목록 -->
+<div>
+<h3>Saved Restaurants</h3>
+<div id="restaurantList"></div>
+</div>
+</div>
+<!-- 월별 추억 -->
+<div class="page" id="statsSection" style="display: none;">
+
+<!-- 월 이동 -->
+<div class="month">
+<button aria-label="Previous month" class="icon-button" onclick="changeStatsMonth(-1)" type="button">
+            ‹
+        </button>
+<h3 id="statsMonthTitle"></h3>
+<button aria-label="Next month" class="icon-button" onclick="changeStatsMonth(1)" type="button">
+            ›
+        </button>
+</div>
+<!-- 통계 -->
+<div class="stats-grid">
+<div class="stat-card"><span>Date Days</span><div id="statsDateCount">
+                0일
+            </div></div>
+<div class="stat-card"><span>Places</span><div id="statsPlaceCount">
+                0곳
+            </div></div>
+<div class="stat-card"><span>Photo Days</span><div id="statsPhotoCount">
+                0일
+            </div></div>
+<div class="stat-card"><span>Memo Days</span><div id="statsMemoCount">
+                0일
+            </div></div>
+</div>
+<!-- 방문한 장소 -->
+<div class="visited-places">
+<h3>Visited Places</h3>
+<div id="statsPlaces">
+            아직 기록된 장소가 없어요.
+        </div>
+</div>
+</div>
+<script>
+async function showMap() {
+    if (!window.kakao?.maps) return showMapUnavailable("dateMap");
+
+    const mapSection =
+        document.getElementById("mapSection");
+
+    mapSection.style.display = "block";
+
+    const mapContainer =
+        document.getElementById("dateMap");
+
+    const mapOption = {
+        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        level: 8
+    };
+
+    const map =
+        new kakao.maps.Map(
+            mapContainer,
+            mapOption
+        );
+
+    // 현재 열려 있는 정보창
+    let openInfoWindow = null;
+
+    // Supabase에서 장소 가져오기
+    const { data, error } =
+        await supabaseClient
+            .from("memories")
+            .select(
+                "date, text, place_name, place_address, latitude, longitude"
+            )
+            .not("latitude", "is", null)
+            .not("longitude", "is", null);
+
+    if (error) {
+        reportOperationError();
+        alert("장소를 불러오지 못했어요.");
+        return;
+    }
+
+
+
+    // 저장된 장소가 없을 때
+    if (!data || data.length === 0) {
+        alert("저장된 데이트 장소가 아직 없어요.");
+        return;
+    }
+
+    const bounds = new kakao.maps.LatLngBounds();
+
+    // 장소마다 마커 만들기
+    data.forEach(function(place) {
+
+        const position =
+            new kakao.maps.LatLng(
+                Number(place.latitude),
+                Number(place.longitude)
+            );
+
+        bounds.extend(position);
+
+        const marker =
+            new kakao.maps.Marker({
+                map: map,
+                position: position
+            });
+
+        const infoWindow =
+            new kakao.maps.InfoWindow({
+                content: `
+                    <div
+                        onclick="moveToDate(${safeJSArgument(place.date)})"
+                        style="
+                            padding:12px;
+                            font-size:13px;
+                            min-width:170px;
+                            cursor:pointer;
+                        "
+                    >
+                        <strong>${escapeHTML(place.place_name)}</strong>
+                        <br>
+                        <span style="color:#888;">
+                            ${escapeHTML(place.place_address || "")}
+                        </span>
+                        <br>
+                        <span style="
+                            color:#f3a6b5;
+                            display:inline-block;
+                            margin-top:5px;
+                        ">
+                            ${escapeHTML(place.date)}
+                        </span>
+                        <br>
+                        <span style="
+                            color:#aaa;
+                            font-size:11px;
+                        ">
+                            클릭하면 해당 날짜로 이동
+                        </span>
+                    </div>
+                `
+            });
+
+        kakao.maps.event.addListener(
+            marker,
+            "click",
+            function() {
+
+                renderPlaceDetail(place);
+                // 다른 정보창 닫기
+                if (openInfoWindow) {
+                    openInfoWindow.close();
+                }
+
+                infoWindow.open(
+                    map,
+                    marker
+                );
+
+                openInfoWindow = infoWindow;
+            }
+        );
+    });
+
+    // 모든 장소가 한 화면에 들어오도록 조정
+    map.setBounds(bounds);
+
+    // 지도 다른 곳을 클릭하면 정보창 닫기
+    kakao.maps.event.addListener(
+        map,
+        "click",
+        function() {
+
+            if (openInfoWindow) {
+                openInfoWindow.close();
+                openInfoWindow = null;
+            }
+
+        }
+    );
+}
+let restaurantPageName = "";
+let restaurantPageAddress = "";
+let restaurantPageLatitude = null;
+let restaurantPageLongitude = null;
+let editingRestaurantId = null;
+
+function searchRestaurantPage() {
+    if (!window.kakao?.maps?.services) { alert("지도 서비스를 불러오지 못했어요. 연결을 확인해 주세요."); return; }
+
+    const keyword =
+        document.getElementById("restaurantPageSearch")
+            .value.trim();
+
+    if (!keyword) {
+        alert("맛집을 입력해주세요.");
+        return;
+    }
+
+    const ps = new kakao.maps.services.Places();
+
+    ps.keywordSearch(keyword, function(data, status) {
+
+        const results =
+            document.getElementById("restaurantPageResults");
+
+        results.innerHTML = "";
+        results.style.display = "block";
+
+        if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            results.innerHTML =
+                "<p>검색 결과가 없어요.</p>";
+            return;
+        }
+
+        if (status !== kakao.maps.services.Status.OK) {
+            results.innerHTML =
+                "<p>맛집 검색에 실패했어요.</p>";
+            return;
+        }
+
+        data.slice(0, 5).forEach(function(place) {
+
+            const item =
+                document.createElement("div");
+
+            item.style.padding = "12px";
+            item.style.borderBottom =
+                "1px solid #eee";
+            item.style.cursor = "pointer";
+
+            item.innerHTML = `
+                <strong>${escapeHTML(place.place_name)}</strong>
+                <br>
+                <span style="
+                    font-size: 13px;
+                    color: #888;
+                ">
+                    ${escapeHTML(place.road_address_name || place.address_name)}
+                </span>
+            `;
+
+            item.onclick = function() {
+
+                restaurantPageName =
+                    place.place_name;
+
+                restaurantPageAddress =
+                    place.road_address_name ||
+                    place.address_name;
+
+                restaurantPageLatitude =
+                    Number(place.y);
+
+                restaurantPageLongitude =
+                    Number(place.x);
+
+                document
+                    .getElementById("restaurantPageSearch")
+                    .value = restaurantPageName;
+
+                results.innerHTML = `
+                    <div style="
+                        padding: 12px;
+                        background: #fff7f8;
+                        border-radius: 10px;
+                    ">
+                        <strong>${escapeHTML(restaurantPageName)}</strong>
+                        <br>
+                        <span style="
+                            font-size: 13px;
+                            color: #888;
+                        ">
+                            ${escapeHTML(restaurantPageAddress)}
+                        </span>
+                    </div>
+                `;
+            };
+
+            results.appendChild(item);
+        });
+    });
+}
+async function saveRestaurantPage() {
+
+    const visitDate =
+        document.getElementById("restaurantDate").value;
+
+    const rating =
+        document.getElementById("restaurantPageRating").value;
+
+    const review =
+        document.getElementById("restaurantReview").value.trim();
+
+    if (!visitDate) {
+        alert("방문 날짜를 선택해주세요.");
+        return;
+    }
+
+    if (!restaurantPageName) {
+        alert("맛집을 검색해서 선택해주세요.");
+        return;
+    }
+
+    if (!rating) {
+        alert("별점을 선택해주세요.");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+    let error;
+
+    // 수정 중이면 UPDATE
+    if (editingRestaurantId !== null) {
+
+        const result =
+            await supabaseClient
+                .from("restaurants")
+                .update({
+                    visit_date: visitDate,
+                    name: restaurantPageName,
+                    address: restaurantPageAddress,
+                    latitude: restaurantPageLatitude,
+                    longitude: restaurantPageLongitude,
+                    rating: Number(rating),
+                    review: review
+                })
+                .eq("id", editingRestaurantId);
+
+        error = result.error;
+
+    } else {
+
+        // 새 맛집이면 INSERT
+        const result =
+            await supabaseClient
+                .from("restaurants")
+                .insert({
+                    visit_date: visitDate,
+                    name: restaurantPageName,
+                    address: restaurantPageAddress,
+                    latitude: restaurantPageLatitude,
+                    longitude: restaurantPageLongitude,
+                    rating: Number(rating),
+                    review: review,
+                    user_id: user.id
+                });
+
+        error = result.error;
+    }
+
+    if (error) {
+        reportOperationError();
+        alert("맛집 저장 중 오류가 발생했어요.");
+        return;
+    }
+
+    const wasEditing =
+        editingRestaurantId !== null;
+
+    // 수정 상태 종료
+    editingRestaurantId = null;
+
+    // 입력창 초기화
+    document.getElementById("restaurantDate").value = "";
+    document.getElementById("restaurantPageSearch").value = "";
+    document.getElementById("restaurantPageRating").value = "";
+    document.getElementById("restaurantReview").value = "";
+    document.getElementById("restaurantPageResults").innerHTML = "";
+    document.getElementById("restaurantPageResults").style.display = "none";
+
+    restaurantPageName = "";
+    restaurantPageAddress = "";
+    restaurantPageLatitude = null;
+    restaurantPageLongitude = null;
+
+DraftGuard.clean("restaurantMap");
+    // 목록 + 지도 바로 갱신
+    await loadRestaurantList();
+    await showRestaurantMap();
+
+    if (wasEditing) {
+        alert("맛집 기록을 수정했어요 ♡");
+    } else {
+        alert("맛집을 저장했어요 ♡");
+    }
+}
+async function loadRestaurantList() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("restaurants")
+            .select("*")
+            .order("rating", { ascending: false })
+            .order("visit_date", { ascending: false });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("restaurantList");
+
+    list.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align: center;
+                color: #aaa;
+                padding: 25px;
+            ">
+                아직 저장된 맛집이 없어요 ♡
+            </div>
+        `;
+        return;
+    }
+
+    data.forEach(function(restaurant) {
+
+        const card =
+            document.createElement("div");
+
+        card.dataset.recordId = String(restaurant.id);
+        card.style.cssText = `
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+        `;
+
+        card.innerHTML = `
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    ">
+        <strong>
+            ${escapeHTML(restaurant.name)}
+        </strong>
+
+        <span>
+            ★ ${restaurant.rating}
+        </span>
+    </div>
+
+    <div style="
+        margin-top: 6px;
+        font-size: 13px;
+        color: #888;
+    ">
+        ${escapeHTML(restaurant.visit_date)}
+    </div>
+
+    <div style="
+        margin-top: 4px;
+        font-size: 13px;
+        color: #aaa;
+    ">
+        ${escapeHTML(restaurant.address || "")}
+    </div>
+
+    ${
+        restaurant.review
+            ? `
+                <div class="record-text" style="
+                    margin-top: 10px;
+                    font-size: 14px;
+                ">${escapeHTML(restaurant.review)}</div>
+            `
+            : ""
+    }
+
+<div class="record-actions" style="
+    text-align: right;
+    margin-top: 12px;
+">
+    <button
+        type="button"
+        onclick="editRestaurant(${restaurant.id})"
+        style="
+            border: none;
+            background: none;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+            margin-right: 6px;
+        "
+    >
+        수정
+    </button>
+
+    <button
+        type="button"
+        onclick="deleteRestaurant(${restaurant.id})"
+        style="
+            border: none;
+            background: none;
+            color: #aaa;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+        "
+    >
+        삭제
+    </button>
+</div>
+`;
+        list.appendChild(card);
+    });
+}
+async function editRestaurant(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("restaurants")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+    if (error) {
+        reportOperationError();
+        alert("맛집 정보를 불러오지 못했어요.");
+        return;
+    }
+
+    editingRestaurantId = id;
+
+    restaurantPageName = data.name;
+    restaurantPageAddress = data.address;
+    restaurantPageLatitude = data.latitude;
+    restaurantPageLongitude = data.longitude;
+
+    document.getElementById("restaurantDate").value =
+        data.visit_date;
+
+    document.getElementById("restaurantPageSearch").value =
+        data.name;
+
+    document.getElementById("restaurantPageRating").value =
+        data.rating;
+
+    document.getElementById("restaurantReview").value =
+        data.review || "";
+
+    document.getElementById("restaurantPageResults").innerHTML = `
+        <div style="
+            padding: 12px;
+            background: #fff7f8;
+            border-radius: 10px;
+        ">
+            <strong>${data.name}</strong>
+            <br>
+            <span style="
+                font-size: 13px;
+                color: #888;
+            ">
+                ${data.address || ""}
+            </span>
+        </div>
+    `;
+
+    document.getElementById("restaurantPageResults")
+        .style.display = "block";
+
+    document.getElementById("restaurantDate")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    DraftGuard.clean("restaurantMap");
+}
+async function deleteRestaurant(id) {
+
+    const confirmed =
+        confirm("이 맛집 기록을 삭제할까요?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("restaurants")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("삭제 중 오류가 발생했어요.");
+        return;
+    }
+
+    await loadRestaurantList();
+    await showRestaurantMap();
+
+    alert("맛집 기록을 삭제했어요.");
+}
+let editingDatePlanId = null;
+async function saveDatePlan() {
+
+
+    const planDate =
+        document.getElementById("planDate").value;
+
+    const title =
+        document.getElementById("planTitle").value.trim();
+
+    const place =
+        document.getElementById("planPlace").value.trim();
+
+    const memo =
+        document.getElementById("planMemo").value.trim();
+
+    const budget =
+        document.getElementById("planBudget").value;
+
+    if (!planDate) {
+        alert("데이트 날짜를 선택해주세요.");
+        return;
+    }
+
+    if (!title) {
+        alert("데이트 제목을 입력해주세요.");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+let error;
+
+if (editingDatePlanId !== null) {
+
+    const result =
+        await supabaseClient
+            .from("date_plans")
+            .update({
+                plan_date: planDate,
+                title: title,
+                place: place || null,
+                memo: memo || null,
+                budget: budget ? Number(budget) : null,
+                completed: document.getElementById("planCompleted").checked
+            })
+            .eq("id", editingDatePlanId);
+
+    error = result.error;
+
+} else {
+
+    const result =
+        await supabaseClient
+            .from("date_plans")
+            .insert({
+                plan_date: planDate,
+                title: title,
+                place: place || null,
+                memo: memo || null,
+                budget: budget ? Number(budget) : null,
+                completed: document.getElementById("planCompleted").checked,
+                user_id: user.id
+            });
+
+    error = result.error;
+}
+
+    if (error) {
+        reportOperationError();
+        alert("저장 중 오류가 발생했어요.");
+        return;
+    }
+    const wasEditing = editingDatePlanId !== null;
+
+editingDatePlanId = null;
+
+document.getElementById("planDate").value = "";
+document.getElementById("planTitle").value = "";
+document.getElementById("planPlace").value = "";
+document.getElementById("planMemo").value = "";
+document.getElementById("planBudget").value = "";
+document.getElementById("planCompleted").checked = false;
+DraftGuard.clean("datePlan");
+await loadDatePlans();
+
+if (wasEditing) {
+    alert("데이트 계획을 수정했어요 ♡");
+} else {
+    alert("데이트 계획을 저장했어요 ♡");
+}
+}
+async function loadDatePlans() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("date_plans")
+            .select("*")
+            .order("plan_date", { ascending: true });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("datePlanList");
+
+    list.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align: center;
+                color: #999;
+                padding: 30px;
+            ">
+                아직 데이트 계획이 없어요 ♡
+            </div>
+        `;
+        return;
+    }
+
+    data.forEach(plan => {
+
+        const card =
+            document.createElement("div");
+
+        card.dataset.recordId = String(plan.id);
+        card.style.cssText = `
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+        `;
+
+card.innerHTML = `
+    <div style="
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    ">
+        ${plan.completed ? "✓" : ""}
+        ${escapeHTML(plan.title)}
+    </div>
+
+    <div> ${escapeHTML(plan.plan_date)}</div>
+
+    ${plan.place
+        ? `<div> ${escapeHTML(plan.place)}</div>`
+        : ""
+    }
+
+    ${plan.budget !== null
+        ? `<div> ${Number(plan.budget).toLocaleString()}원</div>`
+        : ""
+    }
+
+    ${plan.memo
+        ? `<div class="record-text" style="
+            margin-top: 10px;
+            color: #666;
+        ">${escapeHTML(plan.memo)}</div>`
+        : ""
+    }
+
+<div class="record-actions" style="
+    text-align: right;
+    margin-top: 12px;
+">
+    <button
+        type="button"
+        onclick="toggleDatePlanCompleted(${plan.id}, ${plan.completed})"
+        style="
+            border: none;
+            background: none;
+            color: #f3a6b5;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px;
+            margin-right: 8px;
+        "
+    >
+        ${plan.completed ? "↩️ 완료 취소" : "✓ 다녀왔어요"}
+    </button>
+
+    <button
+        type="button"
+        onclick="editDatePlan(${plan.id})"
+        style="
+            border: none;
+            background: none;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+            margin-right: 6px;
+        "
+    >
+        수정
+    </button>
+
+    <button
+        type="button"
+        onclick="deleteDatePlan(${plan.id})"
+        style="
+            border: none;
+            background: none;
+            color: #aaa;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+        "
+    >
+        삭제
+    </button>
+</div>
+`;
+        list.appendChild(card);
+    });
+}
+async function toggleDatePlanCompleted(id, currentCompleted) {
+
+    const { error } =
+        await supabaseClient
+            .from("date_plans")
+            .update({
+                completed: !currentCompleted
+            })
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("변경 중 오류가 발생했어요.");
+        return;
+    }
+
+    await loadDatePlans();
+}
+async function deleteDatePlan(id) {
+
+    const confirmed =
+        confirm("이 데이트 계획을 삭제할까요?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("date_plans")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("삭제 중 오류가 발생했어요.");
+        return;
+    }
+
+    await loadDatePlans();
+
+    alert("데이트 계획을 삭제했어요.");
+}
+async function editDatePlan(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("date_plans")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+    if (error) {
+        reportOperationError();
+        alert("데이트 계획을 불러오지 못했어요.");
+        return;
+    }
+
+    editingDatePlanId = id;
+    document.getElementById("planCompleted").checked = Boolean(data.completed);
+
+    document.getElementById("planDate").value =
+        data.plan_date;
+
+    document.getElementById("planTitle").value =
+        data.title || "";
+
+    document.getElementById("planPlace").value =
+        data.place || "";
+
+    document.getElementById("planMemo").value =
+        data.memo || "";
+
+    document.getElementById("planBudget").value =
+        data.budget ?? "";
+
+    document.getElementById("planDate")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    DraftGuard.clean("datePlan");
+}
+let editingWatchedContentId = null;
+let editingLetterId = null;
+
+async function saveLetter() {
+
+    const letterDate =
+        document.getElementById("letterDate").value;
+
+    const writerName =
+        document.getElementById("letterWriter").value;
+
+    const title =
+        document.getElementById("letterTitle").value.trim();
+
+    const content =
+        document.getElementById("letterContent").value.trim();
+
+    if (!letterDate || !writerName || !title || !content) {
+        alert("날짜, 작성자, 제목, 내용을 모두 입력해주세요.");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+    let error;
+
+    if (editingLetterId !== null) {
+
+        const result =
+            await supabaseClient
+                .from("letters")
+                .update({
+                    letter_date: letterDate,
+                    writer_name: writerName,
+                    title: title,
+                    content: content
+                })
+                .eq("id", editingLetterId);
+
+        error = result.error;
+
+    } else {
+
+        const result =
+            await supabaseClient
+                .from("letters")
+                .insert({
+                    letter_date: letterDate,
+                    writer_name: writerName,
+                    title: title,
+                    content: content,
+                    user_id: user.id
+                });
+
+        error = result.error;
+    }
+
+    if (error) {
+        reportOperationError();
+        alert("편지 저장 중 오류가 발생했어요.");
+        return;
+    }
+
+    const wasEditing = editingLetterId !== null;
+    editingLetterId = null;
+
+    document.getElementById("letterDate").value = "";
+    document.getElementById("letterWriter").value = "";
+    document.getElementById("letterTitle").value = "";
+    document.getElementById("letterContent").value = "";
+
+DraftGuard.clean("letters");
+    await loadLetters();
+
+    if (wasEditing) {
+        alert("편지를 수정했어요 ♡");
+    } else {
+        alert("편지를 저장했어요 ♡");
+    }
+}
+
+
+async function loadLetters() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("letters")
+            .select("*")
+            .order("letter_date", { ascending: false });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("lettersList");
+
+    list.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align:center;
+                color:#999;
+                padding:30px;
+            ">
+                아직 작성한 편지가 없어요 💌
+            </div>
+        `;
+        return;
+    }
+
+    data.forEach(letter => {
+
+        const card =
+            document.createElement("div");
+
+        card.dataset.recordId = String(letter.id);
+        card.style.cssText = `
+            background:white;
+            padding:18px;
+            margin-bottom:12px;
+            border-radius:15px;
+        `;
+
+        card.innerHTML = `
+            <strong style="font-size:18px;">
+                💌 ${escapeHTML(letter.title)}
+            </strong>
+
+            <div style="
+                margin-top:6px;
+                font-size:13px;
+                color:#888;
+            ">
+                ${escapeHTML(letter.letter_date)} · ${escapeHTML(letter.writer_name)}
+            </div>
+
+            <div style="
+                margin-top:12px;
+                white-space:pre-wrap;
+                line-height:1.7;
+            ">${escapeHTML(letter.content)}</div>
+            <div class="record-actions" style="
+    text-align:right;
+    margin-top:12px;
+">
+    <button
+        type="button"
+        onclick="editLetter(${letter.id})"
+        style="
+            border:none;
+            background:none;
+            color:#888;
+            cursor:pointer;
+            margin-right:6px;
+        "
+    >
+        수정
+    </button>
+
+    <button
+        type="button"
+        onclick="deleteLetter(${letter.id})"
+        style="
+            border:none;
+            background:none;
+            color:#aaa;
+            cursor:pointer;
+        "
+    >
+        삭제
+    </button>
+</div>
+        `;
+
+        list.appendChild(card);
+    });
+}
+
+async function editLetter(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("letters")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+    if (error) {
+        reportOperationError();
+        alert("편지를 불러오지 못했어요.");
+        return;
+    }
+
+    editingLetterId = id;
+
+    document.getElementById("letterDate").value =
+        data.letter_date;
+
+    document.getElementById("letterWriter").value =
+        data.writer_name;
+
+    document.getElementById("letterTitle").value =
+        data.title || "";
+
+    document.getElementById("letterContent").value =
+        data.content || "";
+
+    document.getElementById("letterDate")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    DraftGuard.clean("letters");
+}
+
+
+async function deleteLetter(id) {
+
+    const confirmed =
+        confirm("이 편지를 삭제할까요?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("letters")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("삭제 중 오류가 발생했어요.");
+        return;
+    }
+
+    await loadLetters();
+
+    alert("편지를 삭제했어요.");
+}
+let editingPhotoboothId = null;
+let editingPhotoboothPhotoPath = null;
+ async function savePhotobooth() {
+
+    const photoDate =
+        document.getElementById("photoboothDate").value;
+
+    const title =
+        document.getElementById("photoboothTitle").value.trim();
+
+    const memo =
+        document.getElementById("photoboothMemo").value.trim();
+
+    const file =
+        document.getElementById("photoboothPhoto").files[0];
+
+    if (!photoDate || !title) {
+        alert("날짜와 제목을 입력해주세요.");
+        return;
+    }
+
+    if (editingPhotoboothId === null && !file) {
+        alert("사진을 선택해주세요.");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+    let photoPath = editingPhotoboothPhotoPath;
+
+    // 새 사진을 선택한 경우
+    if (file) {
+
+        const extension =
+            file.name.split(".").pop();
+
+        const fileName =
+            `photobooth-${uniquePhotoId()}.${extension}`;
+
+        const { error: uploadError } =
+            await supabaseClient.storage
+                .from("photos")
+                .upload(fileName, file);
+
+        if (uploadError) {
+            reportOperationError();
+            alert("사진 업로드 중 오류가 발생했어요.");
+            return;
+        }
+
+        photoPath = fileName;
+    }
+
+    let error;
+
+    if (editingPhotoboothId !== null) {
+
+        const result =
+            await supabaseClient
+                .from("photobooth")
+                .update({
+                    photo_date: photoDate,
+                    title: title,
+                    photo_path: photoPath,
+                    memo: memo || null
+                })
+                .eq("id", editingPhotoboothId);
+
+        error = result.error;
+
+    } else {
+
+        const result =
+            await supabaseClient
+                .from("photobooth")
+                .insert({
+                    photo_date: photoDate,
+                    title: title,
+                    photo_path: photoPath,
+                    memo: memo || null,
+                    user_id: user.id
+                });
+
+        error = result.error;
+    }
+
+    if (error) {
+        reportOperationError();
+        alert("저장 중 오류가 발생했어요.");
+        return;
+    }
+
+    let photoCleanupFailed = false;
+    // 사진을 교체했다면 기존 사진 삭제
+    if (
+        editingPhotoboothId !== null &&
+        file &&
+        editingPhotoboothPhotoPath &&
+        editingPhotoboothPhotoPath !== photoPath
+    ) {
+        const {error: cleanupError} = await supabaseClient.storage
+            .from("photos")
+            .remove([editingPhotoboothPhotoPath]);
+        photoCleanupFailed = Boolean(cleanupError);
+    }
+
+    const wasEditing =
+        editingPhotoboothId !== null;
+
+    editingPhotoboothId = null;
+    editingPhotoboothPhotoPath = null;
+
+    document.getElementById("photoboothDate").value = "";
+    document.getElementById("photoboothTitle").value = "";
+    document.getElementById("photoboothPhoto").value = "";
+document.getElementById("photoboothPhoto").dispatchEvent(new Event("change"));
+    document.getElementById("photoboothMemo").value = "";
+
+DraftGuard.clean("photobooth");
+    await loadPhotobooth();
+
+    if (wasEditing) {
+        alert(photoCleanupFailed ? "기록은 수정했지만 이전 사진 파일을 정리하지 못했어요. 저장소 권한 확인이 필요합니다." : "포토부스 기록을 수정했어요 ♡");
+    } else {
+        alert("포토부스 사진을 저장했어요 ♡");
+    }
+}
+async function loadPhotobooth() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("photobooth")
+            .select("*")
+            .order("photo_date", { ascending: false });
+
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("photoboothList");
+
+    list.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align:center;
+                color:#999;
+                padding:30px;
+            ">
+                아직 포토부스 사진이 없어요 📸
+            </div>
+        `;
+        return;
+    }
+
+    for (const photo of data) {
+
+        const { data: signedData, error: signedError } =
+            await supabaseClient.storage
+                .from("photos")
+                .createSignedUrl(photo.photo_path, 3600);
+
+        if (signedError) {
+            reportOperationError();
+            continue;
+        }
+
+        const card =
+            document.createElement("div");
+
+        card.dataset.recordId = String(photo.id);
+        card.style.cssText = `
+            background:white;
+            padding:18px;
+            margin-bottom:15px;
+            border-radius:15px;
+        `;
+
+        card.innerHTML = `
+            <img
+                src="${escapeHTML(signedData.signedUrl)}"
+                style="
+                    width:100%;
+                    max-height:500px;
+                    object-fit:contain;
+                    border-radius:12px;
+                "
+            >
+
+            <div style="
+                font-size:18px;
+                font-weight:bold;
+                margin-top:12px;
+            ">
+                ${escapeHTML(photo.title)}
+            </div>
+
+            <div style="
+                font-size:13px;
+                color:#888;
+                margin-top:5px;
+            ">
+                ${escapeHTML(photo.photo_date)}
+            </div>
+
+            ${
+                photo.memo
+                    ? `
+                        <div style="
+                            margin-top:10px;
+                            white-space:pre-wrap;
+                        ">
+                            ${escapeHTML(photo.memo)}
+                        </div>
+                    `
+                    : ""
+            }
+            <div class="record-actions" style="
+    text-align:right;
+    margin-top:12px;
+">
+    <button
+        type="button"
+        onclick="editPhotobooth(${photo.id})"
+        style="
+            border:none;
+            background:none;
+            color:#888;
+            cursor:pointer;
+            margin-right:6px;
+        "
+    >
+        수정
+    </button>
+
+    <button
+        type="button"
+        onclick="deletePhotobooth(${safeJSArgument(photo.id)}, ${safeJSArgument(photo.photo_path)})"
+        style="
+            border:none;
+            background:none;
+            color:#aaa;
+            cursor:pointer;
+        "
+    >
+        삭제
+    </button>
+</div>
+        `;
+
+        list.appendChild(card);
+    }
+}
+async function editPhotobooth(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("photobooth")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+    if (error) {
+        reportOperationError();
+        alert("기록을 불러오지 못했어요.");
+        return;
+    }
+
+    editingPhotoboothId = id;
+    editingPhotoboothPhotoPath = data.photo_path;
+
+    document.getElementById("photoboothDate").value =
+        data.photo_date;
+
+    document.getElementById("photoboothTitle").value =
+        data.title || "";
+
+    document.getElementById("photoboothMemo").value =
+        data.memo || "";
+
+    document.getElementById("photoboothPhoto").value = "";
+document.getElementById("photoboothPhoto").dispatchEvent(new Event("change"));
+
+    document.getElementById("photoboothDate")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    DraftGuard.clean("photobooth");
+}
+
+
+async function deletePhotobooth(id, photoPath) {
+
+    const confirmed =
+        confirm("이 포토부스 기록을 삭제할까요?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("photobooth")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("삭제 중 오류가 발생했어요.");
+        return;
+    }
+
+    let photoCleanupFailed = false;
+    if (photoPath) {
+        const { error: storageError } =
+            await supabaseClient.storage
+                .from("photos")
+                .remove([photoPath]);
+
+        if (storageError) {
+            photoCleanupFailed = true;
+            reportOperationError();
+        }
+    }
+
+    await loadPhotobooth();
+
+    alert(photoCleanupFailed ? "기록은 삭제했지만 사진 파일은 정리하지 못했어요. 저장소 권한 확인이 필요합니다." : "포토부스 기록을 삭제했어요.");
+}
+async function saveWatchedContent() {
+
+    const watchDate =
+        document.getElementById("watchDate").value;
+
+    const contentType =
+        document.getElementById("contentType").value;
+
+    const title =
+        document.getElementById("contentTitle").value.trim();
+
+    const rating =
+        document.getElementById("contentRating").value;
+
+    const review =
+        document.getElementById("contentReview").value.trim();
+
+    if (!watchDate) {
+        alert("같이 본 날짜를 선택해주세요.");
+        return;
+    }
+
+    if (!contentType) {
+        alert("종류를 선택해주세요.");
+        return;
+    }
+
+    if (!title) {
+        alert("제목을 입력해주세요.");
+        return;
+    }
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("로그인이 필요해요.");
+        return;
+    }
+
+let error;
+
+if (editingWatchedContentId !== null) {
+
+    const result =
+        await supabaseClient
+            .from("watched_contents")
+            .update({
+                watch_date: watchDate,
+                title: title,
+                content_type: contentType,
+                rating: rating ? Number(rating) : null,
+                review: review || null
+            })
+            .eq("id", editingWatchedContentId);
+
+    error = result.error;
+
+} else {
+
+    const result =
+        await supabaseClient
+            .from("watched_contents")
+            .insert({
+                watch_date: watchDate,
+                title: title,
+                content_type: contentType,
+                rating: rating ? Number(rating) : null,
+                review: review || null,
+                user_id: user.id
+            });
+
+    error = result.error;
+}
+
+    if (error) {
+        reportOperationError();
+        alert("저장 중 오류가 발생했어요.");
+        return;
+    }
+    const wasEditing =
+    editingWatchedContentId !== null;
+
+editingWatchedContentId = null;
+
+document.getElementById("watchDate").value = "";
+document.getElementById("contentType").value = "";
+document.getElementById("contentTitle").value = "";
+document.getElementById("contentRating").value = "";
+document.getElementById("contentReview").value = "";
+DraftGuard.clean("watched");
+setWatchedCategory(watchedCategory(contentType), false);
+await loadWatchedContents();
+
+if (wasEditing) {
+    alert("같이 본 기록을 수정했어요 ♡");
+} else {
+    alert("같이 본 기록을 저장했어요 ♡");
+}
+}
+let selectedWatchedCategory = "영화";
+let watchedLoadVersion = 0;
+function watchedCategory(type) {
+    if (["영화","드라마","예능"].includes(type)) return type;
+    if (["뮤지컬 및 연극","뮤지컬","연극"].includes(type)) return "뮤지컬 및 연극";
+    return "기타";
+}
+function setWatchedCategory(category, reload = true) {
+    selectedWatchedCategory = category;
+    document.querySelectorAll("[data-watch-category]").forEach(button => {
+        button.setAttribute("aria-selected", String(button.dataset.watchCategory === category));
+    });
+    if (reload && authenticated) return loadWatchedContents();
+}
+function preserveWatchedTypeOption(value) {
+    const select = document.getElementById("contentType");
+    select.querySelectorAll("[data-legacy-type]").forEach(option => option.remove());
+    if (value && ![...select.options].some(option => option.value === value)) {
+        const option = document.createElement("option");
+        option.value = value; option.textContent = value + " · 기존 기록";
+        option.hidden = true; option.disabled = true; option.dataset.legacyType = "true";
+        select.append(option);
+    }
+}
+async function loadWatchedContents() {
+
+    const requestedCategory = selectedWatchedCategory;
+    const requestVersion = ++watchedLoadVersion;
+    const { data: allData, error } =
+        await supabaseClient
+            .from("watched_contents")
+            .select("*")
+            .order("watch_date", { ascending: false })
+            .order("id", { ascending: false });
+
+    if (requestVersion !== watchedLoadVersion) return;
+    const data = (allData || []).filter(item => watchedCategory(item.content_type) === requestedCategory);
+    if (error) {
+        reportOperationError();
+        return;
+    }
+
+    const list =
+        document.getElementById("watchedList");
+
+    list.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align: center;
+                color: #999;
+                padding: 30px;
+            ">
+                이 분류에 저장된 기록이 없어요.
+            </div>
+        `;
+        return;
+    }
+
+    let lastWatchDate = null;
+    data.forEach(content => {
+        if (content.watch_date !== lastWatchDate) {
+            const heading = document.createElement("h3");
+            heading.className = "watch-date";
+            heading.textContent = formatDate(content.watch_date);
+            list.appendChild(heading);
+            lastWatchDate = content.watch_date;
+        }
+
+        const card =
+            document.createElement("div");
+
+        card.dataset.recordId = String(content.id);
+        card.style.cssText = `
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+        `;
+
+        card.innerHTML = `
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            ">
+                <strong>
+                    ${escapeHTML(content.title)}
+                </strong>
+
+                ${
+                    content.rating !== null
+                        ? `<span>★ ${content.rating}</span>`
+                        : ""
+                }
+            </div>
+
+            <div style="
+                margin-top: 6px;
+                font-size: 13px;
+                color: #888;
+            ">
+                ${watchedCategory(content.content_type) === "뮤지컬 및 연극" ? "🎭 " : ""}${escapeHTML(content.content_type)} · ${escapeHTML(content.watch_date)}
+            </div>
+
+            ${
+                content.review
+                    ? `
+                        <div class="record-text" style="
+                            margin-top: 10px;
+                            font-size: 14px;
+                        ">${escapeHTML(content.review)}</div>
+                    `
+                    : ""
+            }
+            <div class="record-actions" style="
+    text-align: right;
+    margin-top: 12px;
+">
+    <button
+        type="button"
+        onclick="editWatchedContent(${content.id})"
+        style="
+            border: none;
+            background: none;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+            margin-right: 6px;
+        "
+    >
+        수정
+    </button>
+
+    <button
+        type="button"
+        onclick="deleteWatchedContent(${content.id})"
+        style="
+            border: none;
+            background: none;
+            color: #aaa;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px;
+        "
+    >
+        삭제
+    </button>
+</div>
+        `;
+
+        list.appendChild(card);
+    });
+}
+async function deleteWatchedContent(id) {
+
+    const confirmed =
+        confirm("이 기록을 삭제할까요?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("watched_contents")
+            .delete()
+            .eq("id", id);
+
+    if (error) {
+        reportOperationError();
+        alert("삭제 중 오류가 발생했어요.");
+        return;
+    }
+
+    await loadWatchedContents();
+
+    alert("기록을 삭제했어요.");
+}
+async function editWatchedContent(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("watched_contents")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+    if (error) {
+        reportOperationError();
+        alert("기록을 불러오지 못했어요.");
+        return;
+    }
+
+    editingWatchedContentId = id;
+
+    document.getElementById("watchDate").value =
+        data.watch_date;
+
+    preserveWatchedTypeOption(data.content_type || "");
+    document.getElementById("contentType").value = data.content_type || "";
+
+    document.getElementById("contentTitle").value =
+        data.title || "";
+
+    document.getElementById("contentRating").value =
+        data.rating ?? "";
+
+    document.getElementById("contentReview").value =
+        data.review || "";
+
+    document.getElementById("watchDate")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    DraftGuard.clean("watched");
+}
+async function showRestaurantMap() {
+    if (!window.kakao?.maps) return showMapUnavailable("restaurantMap");
+
+    const mapSection =
+        document.getElementById("restaurantMapSection");
+
+    mapSection.style.display = "block";
+
+    const mapContainer =
+        document.getElementById("restaurantMap");
+
+    const mapOption = {
+        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        level: 8
+    };
+
+    const map =
+        new kakao.maps.Map(
+            mapContainer,
+            mapOption
+        );
+
+    let openInfoWindow = null;
+
+    // 새 restaurants 테이블에서 맛집 가져오기
+    const { data, error } =
+        await supabaseClient
+            .from("restaurants")
+            .select(
+                "visit_date, name, address, latitude, longitude, rating, review"
+            )
+            .not("latitude", "is", null)
+            .not("longitude", "is", null);
+
+    if (error) {
+        reportOperationError();
+        alert("맛집을 불러오지 못했어요.");
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        return;
+    }
+
+    const bounds =
+        new kakao.maps.LatLngBounds();
+
+    data.forEach(function(restaurant) {
+
+        const position =
+            new kakao.maps.LatLng(
+                Number(restaurant.latitude),
+                Number(restaurant.longitude)
+            );
+
+        bounds.extend(position);
+
+        const marker =
+            new kakao.maps.Marker({
+                map: map,
+                position: position
+            });
+
+        const rating =
+            restaurant.rating
+                ? "★ " + restaurant.rating
+                : "별점 없음";
+
+        const infoWindow =
+            new kakao.maps.InfoWindow({
+                content: `
+                    <div
+                        style="
+                            padding: 12px;
+                            font-size: 13px;
+                            min-width: 180px;
+                        "
+                    >
+                        <strong>
+                            ${escapeHTML(restaurant.name)}
+                        </strong>
+                        <br>
+
+                        <span style="color:#888;">
+                            ${escapeHTML(restaurant.address || "")}
+                        </span>
+                        <br>
+
+                        <span style="
+                            display:inline-block;
+                            margin-top:5px;
+                        ">
+                            ${rating}
+                        </span>
+                        <br>
+
+                        <span style="
+                            color:#f3a6b5;
+                            display:inline-block;
+                            margin-top:5px;
+                        ">
+                            ${escapeHTML(restaurant.visit_date)}
+                        </span>
+
+                        ${
+                            restaurant.review
+                                ? `
+                                    <br>
+                                    <span style="
+                                        display:inline-block;
+                                        margin-top:7px;
+                                    ">
+                                        ${escapeHTML(restaurant.review.slice(0,120))}
+                                    </span>
+                                `
+                                : ""
+                        }
+                    </div>
+                `
+            });
+
+        kakao.maps.event.addListener(
+            marker,
+            "click",
+            function() {
+
+                if (openInfoWindow) {
+                    openInfoWindow.close();
+                }
+
+                infoWindow.open(
+                    map,
+                    marker
+                );
+
+                openInfoWindow = infoWindow;
+            }
+        );
+    });
+
+    map.setBounds(bounds);
+
+    kakao.maps.event.addListener(
+        map,
+        "click",
+        function() {
+
+            if (openInfoWindow) {
+                openInfoWindow.close();
+                openInfoWindow = null;
+            }
+        }
+    );
+}
+
+
+/* 기존 장소 지도에서 날짜 이동할 때 사용 */
+function moveToDate(date) {
+    const parts = date.split("-").map(Number);
+    currentYear = parts[0]; currentMonth = parts[1] - 1;
+
+    showSection("calendar");
+    openMemory(date);
+}
+
+</script>
+<script>
+/* Presentation helpers. Existing Supabase CRUD, auth and private Storage remain in index.html. */
+const pageNames = {
+  home: "Home",
+  calendar: "Calendar",
+  map: "Places",
+  restaurantMap: "Restaurants",
+  datePlan: "Date Planner",
+  watched: "Watched Together",
+  letters: "Letters",
+  photobooth: "Photobooth",
+  bucket: "Bucket List",
+  stats: "Monthly Memories",
+  settings: "Settings",
+  search: "Search",
+  games: "Mini Games",
+};
+let currentPage = "home";
+let photoboothPreviewUrl = null;
+let authenticated = false;
+let homeLoadVersion = 0;
+function formatMonth(year, month) {
+  return new Date(year, month, 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+function formatDate(date) {
+  return new Date(date + "T12:00:00").toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+function closeMenu() {
+  const menu = document.getElementById("mainMenu");
+  if (menu.open) menu.close();
+  document.body.classList.remove("menu-open");
+  document.getElementById("menuButton").setAttribute("aria-expanded", "false");
+}
+function openMenu() {
+  if (!authenticated) return;
+  document.getElementById("mainMenu").showModal();
+  document.body.classList.add("menu-open");
+  document.getElementById("menuButton").setAttribute("aria-expanded", "true");
+}
+function updatePageHeader(section) {
+  if (!pageNames[section]) return;
+  currentPage = section;
+  if (typeof HomeCover !== "undefined") HomeCover.syncVisibility();
+  closeMenu();
+  const header = document.getElementById("appHeader");
+  header.classList.toggle("is-home", section === "home");
+  const title = document.getElementById("pageTitle");
+  if (section === "home") title.innerHTML = "Jinny <span>♥</span> Wangyu";
+  else title.textContent = pageNames[section];
+  document.title = pageNames[section] + " · Jinny ♥ Wangyu";
+  window.scrollTo({ top: 0, behavior: "instant" });
+  if (section === "home") { refreshHome(); updateHomeClock(); }
+  document.querySelectorAll(".page textarea").forEach(el => { if (el.offsetParent) resizeTextarea(el); });
+  if (section === "calendar") createCalendar();
+}
+function setAuthenticatedUI(signedIn) {
+  const changed = authenticated !== signedIn;
+  authenticated = signedIn;
+  document.body.classList.toggle("authenticated", signedIn);
+  document.getElementById("appHeader").hidden = !signedIn;
+  document.getElementById("loginBox").hidden = signedIn;
+  if (!signedIn) {
+    if (typeof PhotoGames !== "undefined") PhotoGames.reset();
+    if (typeof DraftGuard !== "undefined") DraftGuard.resetSession();
+    if (typeof PhotoViewer !== "undefined") { PhotoViewer.close(); PhotoViewer.clear(); }
+    if (typeof GlobalSearch !== "undefined") GlobalSearch.reset();
+    if (typeof HomeCover !== "undefined") HomeCover.clear();
+    document.getElementById("changePasswordForm")?.reset();
+    const passwordStatus = document.getElementById("passwordStatus"); if (passwordStatus) passwordStatus.textContent="";
+    if (typeof PrivateSession !== "undefined") PrivateSession.invalidate();
+    homeLoadVersion++;
+    closeMenu();
+    document
+      .querySelectorAll(".page")
+      .forEach((el) => (el.style.display = "none"));
+    document
+      .querySelectorAll(
+        "#todayMessages,#datePlanList,#watchedList,#lettersList,#photoboothList,#restaurantList,#bucketList,#statsPlaces",
+      )
+      .forEach((el) => el.replaceChildren());
+    document.getElementById("recentMemory").replaceChildren();
+    document.getElementById("loginPassword").value = "";
+  } else if (changed) {
+    document.getElementById("loginPassword").value = "";
+    showSection("home");
+    updateHomeClock();
+  }
+}
+async function refreshHome() {
+  if (!authenticated) return;
+  if (typeof HomeCover !== "undefined") HomeCover.load();
+  const version = ++homeLoadVersion;
+  loadTodayMessages();
+  if(document.getElementById("recentActivity").open) loadRecentActivity();
+  const card = document.getElementById("recentMemory");
+  card.disabled = true;
+  card.onclick = null;
+  card.replaceChildren();
+  const placeholder = document.createElement("span");
+  placeholder.className = "empty-state";
+  placeholder.textContent = "추억을 불러오는 중…";
+  card.append(placeholder);
+  const { data, error } = await supabaseClient
+    .from("memories")
+    .select("date, place_name, text")
+    .order("date", { ascending: false })
+    .limit(1);
+  if (!authenticated || version !== homeLoadVersion) return;
+  if (error || !data?.length) {
+    placeholder.textContent = error
+      ? "추억을 불러오지 못했어요. 다시 Home을 열어주세요."
+      : "아직 저장된 추억이 없어요.";
+    return;
+  }
+  const memory = data[0];
+  placeholder.remove();
+  const copy = document.createElement("span");
+  copy.className = "recent-copy";
+  const title = document.createElement("strong");
+  title.textContent =
+    formatDate(memory.date) +
+    (memory.place_name ? " · " + memory.place_name : "");
+  copy.append(title);
+  if (memory.text) {
+    const memo = document.createElement("p");
+    memo.textContent = memory.text;
+    copy.append(memo);
+  }
+  card.append(copy);
+  card.disabled = false;
+  card.onclick = () => moveToDate(memory.date);
+}
+function renderPlaceDetail(place) {
+  const detail = document.getElementById("placeDetail");
+  detail.replaceChildren();
+  const button = document.createElement("button");
+  button.type = "button";
+  button.onclick = () => moveToDate(place.date);
+  const title = document.createElement("strong");
+  title.textContent = place.place_name;
+  const arrow = document.createElement("span");
+  arrow.textContent = "›";
+  arrow.setAttribute("aria-hidden", "true");
+  title.append(arrow);
+  const date = document.createElement("time");
+  date.dateTime = place.date;
+  date.textContent = formatDate(place.date);
+  const memo = document.createElement("p");
+  memo.textContent = place.text || "";
+  button.append(title, date, memo);
+  detail.append(button);
+}
+function resizeTextarea(el) {
+  el.style.height = "auto";
+  el.style.height = Math.max(el.scrollHeight, 110) + "px";
+}
+document
+  .querySelectorAll("textarea")
+  .forEach((el) => el.addEventListener("input", () => resizeTextarea(el)));
+// Adjust loaded values and keyboard accessibility without changing the data loaders.
+const originalOpenMemory = openMemory;
+openMemory = async function (date) {
+  await originalOpenMemory(date);
+  if (selectedDate !== date) return;
+  document.getElementById("selectedDate").textContent = formatDate(date);
+  document.getElementById("photoInput").value = "";
+  document
+    .getElementById("heartButton")
+    .setAttribute("aria-pressed", String(heartActive));
+  resizeTextarea(document.getElementById("memoryText"));
+  document
+    .querySelectorAll(".day")
+    .forEach((day) =>
+      day.classList.toggle(
+        "selected",
+        Number(day.firstChild?.textContent) === Number(date.slice(-2)),
+      ),
+    );
+};
+const originalUpdateHeart = updateHeartButton;
+updateHeartButton = function () {
+  originalUpdateHeart();
+  document
+    .getElementById("heartButton")
+    .setAttribute("aria-pressed", String(heartActive));
+};
+new MutationObserver(() => {
+  document.querySelectorAll(".day:not([tabindex])").forEach((day) => {
+    day.tabIndex = 0;
+    day.setAttribute("role", "button");
+    day.setAttribute(
+      "aria-label",
+      formatDate(
+        `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day.firstChild.textContent).padStart(2, "0")}`,
+      ),
+    );
+    day.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        day.click();
+      }
+    };
+  });
+}).observe(document.getElementById("days"), { childList: true });
+document
+  .getElementById("photoboothPhoto")
+  .addEventListener("change", (event) => {
+    const preview = document.getElementById("photoboothPreview");
+    preview.replaceChildren();
+    if (photoboothPreviewUrl) URL.revokeObjectURL(photoboothPreviewUrl);
+    photoboothPreviewUrl = null;
+    const file = event.target.files[0];
+    if (!file) return;
+    photoboothPreviewUrl = URL.createObjectURL(file);
+    const img = document.createElement("img");
+    img.src = photoboothPreviewUrl;
+    img.alt = "선택한 포토부스 사진";
+    preview.append(img);
+  });
+document.getElementById("messageForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  saveTodayMessage();
+});
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!supabaseClient) {
+    document.getElementById("loginMessage").textContent =
+      "로그인 서비스를 불러오지 못했어요. 연결을 확인한 뒤 새로고침해 주세요.";
+    return;
+  }
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+  button.textContent = "Logging in…";
+  document.getElementById("loginMessage").textContent = "";
+  try {
+    await login();
+  } catch {
+    document.getElementById("loginMessage").textContent =
+      "로그인에 연결하지 못했어요. 다시 시도해 주세요.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Login";
+  }
+});
+document.getElementById("mainMenu").addEventListener("close", () => {
+  document.body.classList.remove("menu-open");
+  document.getElementById("menuButton").setAttribute("aria-expanded", "false");
+});
+// Require explicit password login on every page load, even if Supabase restores a session.
+// Keep the SDK's stored authentication untouched; restored sessions never unlock the UI.
+(() => {
+  setAuthenticatedUI(false);
+  if (!supabaseClient) {
+    document.getElementById("loginMessage").textContent =
+      "로그인 서비스를 불러오지 못했어요. 연결을 확인한 뒤 새로고침해 주세요.";
+    return;
+  }
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === "SIGNED_OUT") setAuthenticatedUI(false);
+  });
+})();
+
+const originalEditPhotobooth = editPhotobooth;
+editPhotobooth = async function (id) {
+  await originalEditPhotobooth(id);
+  if (!editingPhotoboothPhotoPath) return;
+  const { data, error } = await supabaseClient.storage
+    .from("photos")
+    .createSignedUrl(editingPhotoboothPhotoPath, 3600);
+  if (error || !data?.signedUrl) return;
+  const image = document.createElement("img");
+  image.src = data.signedUrl;
+  image.alt = "저장된 포토부스 사진";
+  document.getElementById("photoboothPreview").replaceChildren(image);
+};
+
+function showMapUnavailable(id) {
+  const container = document.getElementById(id);
+  const message = document.createElement("p");
+  message.className = "empty-state";
+  message.textContent =
+    "지도를 불러오지 못했어요. 연결을 확인한 뒤 새로고침해 주세요.";
+  container.replaceChildren(message);
+}
+
+</script><section id="settingsSection" class="page" style="display:none"><section class="settings-card card"><h2>Change Password</h2><form id="changePasswordForm"><label class="field-label" for="currentPassword">현재 비밀번호</label><input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required/><label class="field-label" for="newPassword">새 비밀번호</label><input id="newPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required/><label class="field-label" for="confirmPassword">새 비밀번호 확인</label><input id="confirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required/><button class="primary" type="submit">비밀번호 변경</button><p id="passwordStatus" role="status"></p></form></section><section class="settings-card card"><h2>Home Background</h2><p class="helper-text">직접 선택한 사진을 두 사람의 Home 배경으로 사용합니다. Recent Memory와 독립적으로 저장됩니다.</p><label class="field-label" for="homeCoverFile">대표 사진 · 최대 10MB</label><input id="homeCoverFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"/><div id="homeCoverPreview"></div><button id="saveHomeCover" class="primary" type="button" data-cover-action>배경 사진 저장</button><button id="removeHomeCover" type="button" data-cover-action>배경 해제</button><p id="coverStatus" role="status"></p></section><section class="settings-card card"><h2>Notifications</h2><p id="notificationStatus" role="status"></p><button id="enableNotifications" class="primary" type="button">알림 켜기</button><p class="helper-text">권한은 버튼을 눌렀을 때만 요청합니다.</p></section><section class="settings-card card"><h2>Export Data</h2><p class="helper-text">접근이 허용된 기록을 JSON으로 저장합니다. 사진은 경로와 메타데이터를 포함합니다.</p><button id="exportDataButton" class="primary" type="button">Export Data</button><p id="exportStatus" role="status"></p></section><section class="settings-card card"><button id="logoutButton" type="button">Logout</button><p id="logoutStatus" role="status"></p></section></section>
+<script>
+/* Additive features. No service credential values are read or copied here. */
+const APP_OPTIONS = Object.freeze({
+  timeZone: "Asia/Seoul",
+  push: Object.freeze({ publicKey: "", subscriptionStorageReady: false }),
+});
+function uniquePhotoId() {
+  return typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
+        b.toString(16).padStart(2, "0"),
+      ).join("");
+}
+function escapeHTML(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        char
+      ],
+  );
+}
+function safeJSArgument(value) {
+  return escapeHTML(JSON.stringify(value));
+}
+function reportOperationError() {
+  /* Never print backend responses or credentials. Existing operation feedback remains visible. */
+}
+const PrivateSession = {
+  version: 0,
+  invalidate() {
+    this.version++;
+    document.getElementById("activityList")?.replaceChildren();
+    document.getElementById("exportStatus").textContent = "";
+  },
+  assert(version) {
+    if (!authenticated || version !== this.version)
+      throw new Error("Session changed");
+  },
+};
+const AppAuth = {
+  user: null,
+  async authenticate(email, password) {
+    if (!supabaseClient) throw new Error("Authentication unavailable");
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error || !data?.user) return false;
+    this.user = data.user;
+    return true;
+  },
+  async login() {
+    const email = document.getElementById("loginEmail").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById("loginMessage").textContent = "가입한 이메일 주소 전체를 입력해 주세요.";
+      return;
+    }
+    const success = await this.authenticate(
+      email,
+      document.getElementById("loginPassword").value,
+    );
+    if (!success) {
+      document.getElementById("loginMessage").textContent =
+        "이메일 또는 비밀번호가 맞지 않아요.";
+      return;
+    }
+    setAuthenticatedUI(true);
+  },
+  async requireUser() {
+    if (!authenticated) throw new Error("Login required");
+    const { data, error } = await supabaseClient.auth.getUser();
+    if (error || !data?.user) {
+      this.user = null;
+      setAuthenticatedUI(false);
+      throw new Error("Login required");
+    }
+    return data.user;
+  },
+  async logout() {
+    let pushWarning = false;
+    try {
+      await PushSetup.disconnect();
+    } catch {
+      pushWarning = true;
+    }
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      document.getElementById("logoutStatus").textContent =
+        "로그아웃하지 못했어요. 다시 시도해 주세요.";
+      return;
+    }
+    this.user = null;
+    setAuthenticatedUI(false);
+    document.querySelectorAll(".page input,.page textarea").forEach((el) => {
+      if (el.type === "checkbox") el.checked = false;
+      else el.value = "";
+    });
+    document.getElementById("photoPreview").replaceChildren();
+    document.getElementById("photoboothPreview").replaceChildren();
+    document.getElementById("placeDetail").replaceChildren();
+    document.getElementById("loginMessage").textContent = pushWarning
+      ? "로그아웃했습니다. 알림 해제 상태는 기기 설정에서 확인해 주세요."
+      : "";
+  },
+};
+function seoulDateParts(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: APP_OPTIONS.timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const fields = Object.fromEntries(
+    parts.map((part) => [part.type, part.value]),
+  );
+  return {
+    year: Number(fields.year),
+    month: Number(fields.month),
+    day: Number(fields.day),
+  };
+}
+function seoulISODate(now = new Date()) {
+  const p = seoulDateParts(now);
+  return `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
+}
+function relationshipDays(now = new Date()) {
+  const { year, month, day } = seoulDateParts(now);
+  return (
+    Math.floor(
+      (Date.UTC(year, month - 1, day) - Date.UTC(2026, 1, 19)) / 86400000,
+    ) + 1
+  );
+}
+function nextRelationshipMilestone(now = new Date()) {
+  const days = relationshipDays(now);
+  const hundred = (Math.floor(days / 100) + 1) * 100;
+  const { year } = seoulDateParts(now);
+  let anniversaryYear = year;
+  let anniversaryDays =
+    (Date.UTC(anniversaryYear, 1, 19) - Date.UTC(2026, 1, 19)) / 86400000 + 1;
+  if (anniversaryDays <= days) {
+    anniversaryYear++;
+    anniversaryDays =
+      (Date.UTC(anniversaryYear, 1, 19) - Date.UTC(2026, 1, 19)) / 86400000 + 1;
+  }
+  return hundred <= anniversaryDays
+    ? { type: "hundred", day: hundred, remaining: hundred - days }
+    : {
+        type: "anniversary",
+        years: anniversaryYear - 2026,
+        remaining: anniversaryDays - days,
+      };
+}
+function nextMilestoneText(now = new Date()) {
+  const next = nextRelationshipMilestone(now);
+  return (next.type === "hundred" ? next.day + "일까지 " : next.years + "주년까지 ") + next.remaining + "일";
+}
+function updateHomeClock(now = new Date()) {
+  const date = document.getElementById("homeDate");
+  const time = document.getElementById("homeTime");
+  date.textContent = new Intl.DateTimeFormat("en-US", {
+    timeZone: APP_OPTIONS.timeZone,
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(now);
+  time.textContent = new Intl.DateTimeFormat("en-US", {
+    timeZone: APP_OPTIONS.timeZone,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(now);
+  date.dateTime = now.toISOString();
+  time.dateTime = now.toISOString();
+  document.getElementById("dDayCount").textContent =
+    "D+" + relationshipDays(now);
+  document.getElementById("nextMilestone").textContent = nextMilestoneText(now);
+}
+const initialSeoulDate = seoulDateParts();
+currentYear = initialSeoulDate.year;
+currentMonth = initialSeoulDate.month - 1;
+statsYear = currentYear;
+statsMonth = currentMonth;
+updateHomeClock();
+setInterval(() => updateHomeClock(), 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) updateHomeClock();
+});
+function renderSettings() {
+  renderNotificationStatus();
+  document.getElementById("logoutStatus").textContent = "";
+}
+const PushSetup = {
+  config: null,
+  async configuration() {
+    if (APP_OPTIONS.push.publicKey && APP_OPTIONS.push.subscriptionStorageReady) return this.config = {publicKey:APP_OPTIONS.push.publicKey,ready:true};
+    try {
+      const {data,error}=await supabaseClient.functions.invoke('notification-config');
+      if(!error && data?.ready && typeof data.publicKey==='string' && /^[A-Za-z0-9_-]{80,100}$/.test(data.publicKey)) return this.config=data;
+    } catch { /* Missing server configuration never enables a fake subscription. */ }
+    return null;
+  },
+  async worker() {
+    if (!("serviceWorker" in navigator) || !window.isSecureContext)
+      throw new Error("Worker unavailable");
+    return navigator.serviceWorker.register("./sw.js", { scope: "./" });
+  },
+  supported() {
+    return (
+      window.isSecureContext &&
+      "serviceWorker" in navigator &&
+      "PushManager" in window &&
+      "Notification" in window
+    );
+  },
+  standalone() {
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      navigator.standalone === true
+    );
+  },
+  async enable() {
+    if (!authenticated) return;
+    const status = document.getElementById("notificationStatus");
+    if (!this.supported()) {
+      status.textContent =
+        "이 브라우저에서는 웹 알림을 지원하지 않습니다. iPhone은 Safari에서 홈 화면에 추가한 뒤 열어 주세요.";
+      return;
+    }
+    const ios =
+      /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (ios && !this.standalone()) {
+      status.textContent =
+        "Safari의 공유 → 홈 화면에 추가 후 앱에서 다시 열어 주세요.";
+      return;
+    }
+    // Request immediately within the user gesture, never on load or after network awaits.
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      renderNotificationStatus();
+      return;
+    }
+    const config = await this.configuration();
+    if (!config?.ready || !config.publicKey) {
+      status.textContent = "알림 권한은 허용됐지만 서버 설정이 아직 완료되지 않았어요. 설정 후 다시 눌러 주세요.";
+      return;
+    }
+    const user = await AppAuth.requireUser();
+    const version = PrivateSession.version;
+    const registration = await this.worker();
+    await navigator.serviceWorker.ready;
+    const key = config.publicKey
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const bytes = Uint8Array.from(
+      atob(key + "=".repeat((4 - (key.length % 4)) % 4)),
+      (c) => c.charCodeAt(0),
+    );
+    const subscription =
+      (await registration.pushManager.getSubscription()) ||
+      (await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: bytes,
+      }));
+    try {
+      PrivateSession.assert(version);
+      const payload = subscription.toJSON();
+      const { error } = await supabaseClient
+        .from("push_subscriptions")
+        .upsert(
+          {
+            user_id: user.id,
+            endpoint: payload.endpoint,
+            p256dh: payload.keys.p256dh,
+            auth: payload.keys.auth,
+          },
+          { onConflict: "endpoint" },
+        );
+      if (error) throw new Error("Cannot store subscription");
+      PrivateSession.assert(version);
+      status.textContent = "이 기기의 알림 구독을 등록했습니다. 서버 설정 완료 후 상대방의 새 기록·수정 활동, 기념일과 일정 전날 알림을 받습니다.";
+    } catch (error) {
+      await subscription.unsubscribe();
+      throw error;
+    }
+  },
+  async disconnect() {
+    if (!("serviceWorker" in navigator)) return;
+    const registration = await navigator.serviceWorker.getRegistration("./");
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (!subscription) return;
+    let storeError = false;
+    if (subscription) {
+      const { error } = await supabaseClient
+        .from("push_subscriptions")
+        .delete()
+        .eq("endpoint", subscription.endpoint);
+      storeError = Boolean(error);
+    }
+    const removed = await subscription.unsubscribe();
+    if (!removed || storeError) throw new Error("Cannot fully disconnect");
+  },
+};
+function renderNotificationStatus() {
+  const status = document.getElementById("notificationStatus");
+  if (!PushSetup.supported()) {
+    status.textContent =
+      "알림은 지원되는 브라우저·홈 화면 앱에서 사용할 수 있습니다.";
+    return;
+  }
+  status.textContent =
+    Notification.permission === "denied"
+      ? "알림이 차단되어 있습니다. 기기 설정에서 변경해 주세요."
+      : Notification.permission === "granted"
+        ? "알림 권한이 허용되어 있습니다. 실제 전송은 서버 설정이 필요합니다."
+        : "아직 알림 권한을 요청하지 않았습니다.";
+}
+document
+  .getElementById("enableNotifications")
+  .addEventListener("click", async () => {
+    const button = document.getElementById("enableNotifications");
+    button.disabled = true;
+    try {
+      await PushSetup.enable();
+    } catch {
+      document.getElementById("notificationStatus").textContent =
+        "알림 설정을 완료하지 못했어요. 연결과 기기 설정을 확인해 주세요.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const button = document.getElementById("logoutButton");
+  if (button.disabled) return;
+  button.disabled = true;
+  try {
+    await AppAuth.logout();
+  } catch {
+    document.getElementById("logoutStatus").textContent =
+      "로그아웃하지 못했어요. 다시 시도해 주세요.";
+  } finally {
+    button.disabled = false;
+  }
+});
+const EXPORT_TABLES = Object.freeze([
+  "memories",
+  "restaurants",
+  "date_plans",
+  "watched_contents",
+  "letters",
+  "photobooth",
+  "date_bucket_list",
+  "daily_messages",
+]);
+async function collectExportData() {
+  await AppAuth.requireUser();
+  const version = PrivateSession.version;
+  const result = {
+    format: "our-memories",
+    version: 1,
+    exported_at: new Date().toISOString(),
+    photos: "metadata-and-paths-only",
+    tables: {},
+  };
+  for (const table of EXPORT_TABLES) {
+    const rows = [];
+    for (let start = 0; ; start += 500) {
+      if (start >= 100000) throw new Error("Export too large");
+      const { data, error } = await supabaseClient
+        .from(table)
+        .select("*")
+        .order("id", { ascending: true })
+        .range(start, start + 499);
+      PrivateSession.assert(version);
+      if (error || !Array.isArray(data)) throw new Error("Export incomplete");
+      rows.push(...data);
+      if (data.length < 500) break;
+    }
+    result.tables[table] = rows;
+  }
+  await AppAuth.requireUser();
+  PrivateSession.assert(version);
+  return result;
+}
+document
+  .getElementById("exportDataButton")
+  .addEventListener("click", async () => {
+    const button = document.getElementById("exportDataButton");
+    if (button.disabled) return;
+    button.disabled = true;
+    const status = document.getElementById("exportStatus");
+    status.textContent = "기록을 준비하는 중…";
+    let url;
+    try {
+      const data = await collectExportData();
+      url = URL.createObjectURL(
+        new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }),
+      );
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download =
+        "our-memories-" + new Date().toISOString().slice(0, 10) + ".json";
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      status.textContent =
+        "백업 파일을 저장했습니다. 개인 기록이므로 안전한 곳에 보관해 주세요.";
+    } catch {
+      status.textContent = authenticated
+        ? "전체 기록을 백업하지 못했어요. 연결과 접근 권한을 확인해 주세요."
+        : "다시 로그인한 뒤 백업해 주세요.";
+    } finally {
+      if (url) setTimeout(() => URL.revokeObjectURL(url), 1000);
+      button.disabled = false;
+    }
+  });
+const ACTIVITY_SOURCES = Object.freeze([
+  { table: "memories", label: "추억을 남겼어요" },
+  { table: "restaurants", label: "맛집을 남겼어요" },
+  { table: "date_plans", label: "데이트 계획을 남겼어요" },
+  { table: "watched_contents", label: "같이 본 기록을 남겼어요" },
+  { table: "letters", label: "편지를 남겼어요" },
+  { table: "photobooth", label: "사진을 남겼어요" },
+]);
+async function loadRecentActivity() {
+  if (!authenticated) return;
+  const version = PrivateSession.version;
+  const container = document.getElementById("activityList");
+  container.textContent = "불러오는 중…";
+  const results = await Promise.all(
+    ACTIVITY_SOURCES.map(async (source) => {
+      try {
+        const { data, error } = await supabaseClient
+          .from(source.table)
+          .select("created_at,user_id")
+          .order("created_at", { ascending: false })
+          .limit(5);
+        return error
+          ? []
+          : (data || [])
+              .filter((row) => Number.isFinite(Date.parse(row.created_at)))
+              .map((row) => ({ ...row, label: source.label }));
+      } catch {
+        return [];
+      }
+    }),
+  );
+  if (!authenticated || version !== PrivateSession.version) return;
+  container.replaceChildren();
+  const activity = results
+    .flat()
+    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+    .slice(0, 5);
+  if (!activity.length) {
+    container.textContent = "표시할 최근 활동이 없어요.";
+    return;
+  }
+  for (const item of activity) {
+    const row = document.createElement("p");
+    row.textContent = getWriterName(item) + " · " + item.label;
+    container.append(row);
+  }
+}
+document
+  .getElementById("recentActivity")
+  .addEventListener("toggle", (event) => {
+    if (event.currentTarget.open) loadRecentActivity();
+  });
+// Prevent duplicate mutations and uploads. Original validation and success feedback are retained.
+const activeMutations = new Set();
+for (const name of [
+  "saveMemory",
+  "saveTodayMessage",
+  "saveRestaurantPage",
+  "saveDatePlan",
+  "saveWatchedContent",
+  "saveLetter",
+  "savePhotobooth",
+  "addBucketItem",
+  "toggleBucketItem",
+  "toggleDatePlanCompleted",
+  "deleteBucketItem",
+  "deleteRestaurant",
+  "deleteDatePlan",
+  "deleteWatchedContent",
+  "deleteLetter",
+  "deletePhotobooth",
+]) {
+  const original = window[name];
+  window[name] = async function (...args) {
+    if (activeMutations.has(name) || !authenticated) return;
+    if (name === "deleteBucketItem" && !confirm("이 항목을 삭제할까요?"))
+      return;
+    activeMutations.add(name);
+    const selectors = ['button[onclick^="' + name + '("]'];
+    if (name === "saveTodayMessage") selectors.push("#messageForm button");
+    const buttons = [...document.querySelectorAll(selectors.join(","))];
+    const states = buttons.map((button) => ({
+      button,
+      text: button.textContent,
+      disabled: button.disabled,
+    }));
+    states.forEach(({ button }) => {
+      button.disabled = true;
+      if (name.startsWith("save") || name === "addBucketItem")
+        button.textContent = "Saving…";
+    });
+    try {
+      await AppAuth.requireUser();
+      return await original(...args);
+    } catch {
+      if (authenticated)
+        alert("요청을 완료하지 못했어요. 연결과 접근 권한을 확인해 주세요.");
+    } finally {
+      activeMutations.delete(name);
+      states.forEach(({ button, text, disabled }) => {
+        button.disabled = disabled;
+        button.textContent = text;
+      });
+    }
+  };
+}
+for (const name of [
+  "editDatePlan",
+  "editLetter",
+  "editWatchedContent",
+  "editPhotobooth",
+  "editRestaurant",
+]) {
+  const original = window[name];
+  window[name] = async function (...args) {
+    if (!authenticated) return;
+    await original(...args);
+    document.querySelectorAll(".page textarea").forEach((el) => {
+      if (el.offsetParent) resizeTextarea(el);
+    });
+  };
+}
+
+</script><script>
+/* Password changes and a shared, explicitly selected Home background. */
+AppAuth.changePassword = async function(currentPassword,newPassword){
+  const version=PrivateSession.version;
+  const user=await this.requireUser();
+  if(!user.email) return {ok:false,message:'계정 정보를 확인하지 못했어요. 다시 로그인해 주세요.'};
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email:user.email,password:currentPassword});
+  if(error || !data?.user || data.user.id!==user.id)return {ok:false,message:'현재 비밀번호를 확인해 주세요.'};
+  PrivateSession.assert(version);
+  const confirmed=await this.requireUser();
+  if(confirmed.id!==user.id)throw new Error('Account changed');
+  const result=await supabaseClient.auth.updateUser({password:newPassword});
+  if(result.error)return {ok:false,message:'비밀번호를 변경하지 못했어요. 비밀번호 정책을 확인하거나 다시 로그인해 주세요.'};
+  return {ok:true,message:'이 계정의 비밀번호를 변경했습니다. 모든 기기의 다음 로그인부터 새 비밀번호를 사용하세요. 다른 계정의 비밀번호는 바뀌지 않습니다.'};
+};
+document.getElementById('changePasswordForm').addEventListener('submit',async event=>{
+  event.preventDefault();const form=event.currentTarget;const button=form.querySelector('button');if(button.disabled)return;
+  const status=document.getElementById('passwordStatus');
+  const current=form.elements.currentPassword.value;const next=form.elements.newPassword.value;const confirmation=form.elements.confirmPassword.value;
+  if(next.length<8){status.textContent='새 비밀번호를 8자 이상 입력해 주세요.';return;}
+  if(next!==confirmation){status.textContent='새 비밀번호와 확인 값이 일치하지 않아요.';return;}
+  if(next===current){status.textContent='현재 비밀번호와 다른 새 비밀번호를 입력해 주세요.';return;}
+  button.disabled=true;status.textContent='변경 중…';
+  try {const result=await AppAuth.changePassword(current,next);if(authenticated)status.textContent=result.message;if(result.ok)form.reset();}
+  catch{if(authenticated)status.textContent='비밀번호를 변경하지 못했어요. 다시 로그인한 뒤 시도해 주세요.';}
+  finally {button.disabled=false;form.elements.currentPassword.value='';}
+});
+const HomeCover={bucket:'home-covers',version:0,path:null,url:null,
+  status(message){document.getElementById('coverStatus').textContent=message;},
+  syncVisibility(){document.body.classList.toggle('home-cover-visible',authenticated&&currentPage==='home'&&Boolean(this.url));},
+  clear(){this.version++;this.path=null;this.url=null;document.body.style.removeProperty('--home-cover');this.syncVisibility();const preview=document.getElementById('homeCoverPreview');if(preview)preview.replaceChildren();},
+  async load(){
+    if(!authenticated)return;const version=++this.version;const sessionVersion=PrivateSession.version;
+    try {
+      const {data,error}=await supabaseClient.from('couple_preferences').select('cover_photo_path').eq('id','home').single();
+      if(!authenticated||version!==this.version||sessionVersion!==PrivateSession.version)return;
+      if(error){this.clear();this.status('공유 배경 설정을 읽지 못했어요. 안내된 SQL과 두 사용자 등록·접근 권한을 확인해 주세요.');return;}
+      if(!data?.cover_photo_path){this.clear();this.status('선택한 대표 사진이 없습니다.');return;}
+      const {data:signed,error:signError}=await supabaseClient.storage.from(this.bucket).createSignedUrl(data.cover_photo_path,3600);
+      if(!authenticated||version!==this.version||sessionVersion!==PrivateSession.version)return;
+      if(signError||!signed?.signedUrl){this.clear();this.status('선택한 사진을 불러오지 못했어요. 다시 선택하거나 접근 권한을 확인해 주세요.');return;}
+      const image=new Image();image.alt='직접 선택한 Home 배경 사진';image.src=signed.signedUrl;
+      await image.decode();
+      if(!authenticated||version!==this.version||sessionVersion!==PrivateSession.version)return;
+      this.path=data.cover_photo_path;this.url=signed.signedUrl;
+      document.body.style.setProperty('--home-cover',`url(${JSON.stringify(this.url)})`);
+      document.getElementById('homeCoverPreview').replaceChildren(image);this.syncVisibility();this.status('두 사람이 공유하는 Home 배경입니다.');
+    }catch{if(authenticated&&version===this.version){this.clear();this.status('대표 사진을 불러오지 못했어요. 다시 시도해 주세요.');}}
+  },
+  async setPath(path){
+    const user=await AppAuth.requireUser();const version=PrivateSession.version;
+    const {error}=await supabaseClient.from('couple_preferences').update({cover_photo_path:path,updated_by:user.id,updated_at:new Date().toISOString()}).eq('id','home').select('cover_photo_path').single();
+    PrivateSession.assert(version);if(error)throw new Error('Cannot save cover');
+    await this.load();
+  },
+  async upload(file){
+    if(!file)throw new Error('Choose a photo');
+    const types={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/avif':'avif','image/heic':'heic','image/heif':'heif'};
+    if(!types[file.type]||file.size>10*1024*1024){this.status('10MB 이하의 JPG·PNG·WebP·GIF·AVIF·HEIC 사진을 선택해 주세요.');return;}
+    await AppAuth.requireUser();const version=PrivateSession.version;const path=uniquePhotoId()+'.'+types[file.type];
+    const {error}=await supabaseClient.storage.from(this.bucket).upload(path,file,{contentType:file.type,upsert:false});
+    PrivateSession.assert(version);if(error)throw new Error('Cannot upload cover');
+    await this.setPath(path);document.getElementById('homeCoverFile').value='';DraftGuard.clean('settingsCover');
+  }
+};
+async function coverAction(action){
+  const buttons=[...document.querySelectorAll('[data-cover-action]')];if(buttons.some(button=>button.disabled))return;
+  buttons.forEach(button=>button.disabled=true);HomeCover.status('저장 중…');
+  try{await action();}catch{if(authenticated)HomeCover.status('변경하지 못했어요. 기존 공유 설정은 유지됩니다. SQL·사용자 등록·접근 권한을 확인해 주세요.');}
+  finally{buttons.forEach(button=>button.disabled=false);}
+}
+document.getElementById('saveHomeCover').addEventListener('click',()=>coverAction(()=>HomeCover.upload(document.getElementById('homeCoverFile').files[0])));
+document.getElementById('removeHomeCover').addEventListener('click',()=>{if(confirm('Home 배경을 해제할까요? 원본 사진은 삭제하지 않습니다.'))coverAction(()=>HomeCover.setPath(null));});
+const previousRenderSettings=renderSettings;
+renderSettings=function(){previousRenderSettings();HomeCover.load();};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authenticated&&currentPage==='home')HomeCover.load();});
+setInterval(()=>{if(authenticated&&currentPage==='home')HomeCover.load();},45*60*1000);
+
+</script><script>
+/* The selected hero remains independent of the latest memory. */
+function syncHomeHero(){
+  const hero=document.getElementById('homeHero');const image=document.getElementById('homeHeroImage');
+  const visible=authenticated && Boolean(HomeCover.url);
+  hero.hidden=!visible;document.getElementById('chooseHomePhoto').hidden=visible;
+  if(visible)image.src=HomeCover.url;else image.removeAttribute('src');
+}
+const loadSelectedHomeCover=HomeCover.load.bind(HomeCover);
+HomeCover.load=async function(){await loadSelectedHomeCover();syncHomeHero();};
+const clearSelectedHomeCover=HomeCover.clear.bind(HomeCover);
+HomeCover.clear=function(){clearSelectedHomeCover();syncHomeHero();};
+// Prefer server-recorded create/update events; older deployments retain the creation-only fallback.
+const loadLegacyActivity=loadRecentActivity;
+loadRecentActivity=async function(){
+  if(!authenticated)return;
+  const version=PrivateSession.version;const container=document.getElementById('activityList');
+  container.textContent='불러오는 중…';
+  try{
+    const {data,error}=await supabaseClient.from('couple_activity').select('id,actor_id,entity,operation,happened_at').order('happened_at',{ascending:false}).order('id',{ascending:false}).limit(5);
+    if(!authenticated||version!==PrivateSession.version)return;
+    if(error){await loadLegacyActivity();return;}
+    container.replaceChildren();
+    const labels={memories:'추억',restaurants:'맛집',date_plans:'데이트 계획',watched_contents:'같이 본 기록',letters:'편지',photobooth:'사진',date_bucket_list:'버킷리스트',daily_messages:'오늘의 한마디'};
+    for(const item of data||[]){
+      const row=document.createElement('p');
+      const time=document.createElement('time');time.dateTime=item.happened_at;
+      time.textContent=new Intl.DateTimeFormat('ko-KR',{timeZone:APP_OPTIONS.timeZone,month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(item.happened_at));
+      row.textContent=getWriterName({user_id:item.actor_id})+' · '+(labels[item.entity]||'기록')+(item.operation==='UPDATE'?' 수정':' 추가');
+      row.append(document.createElement('br'),time);container.append(row);
+    }
+    if(!data?.length)container.textContent='아직 최근 활동이 없어요.';
+  }catch{if(authenticated&&version===PrivateSession.version)await loadLegacyActivity();}
+};
+
+</script><section id="searchSection" class="page" style="display:none"><form id="recordSearchForm" class="search-row"><label class="sr-only" for="recordSearchInput">장소·메모·제목 검색</label><input id="recordSearchInput" type="search" maxlength="120" placeholder="장소·메모·제목 검색"/><button id="searchSubmit" class="primary" type="submit">검색</button></form><p id="recordSearchStatus" class="helper-text" role="status" aria-live="polite"></p><div id="searchResults"></div><button id="searchMore" type="button" hidden>더 보기</button></section><dialog id="searchDetail" aria-labelledby="searchDetailTitle"><div class="search-detail-header"><h2 id="searchDetailTitle"></h2><button type="button" class="icon-button" onclick="document.getElementById('searchDetail').close()" aria-label="검색 기록 닫기">×</button></div><div id="searchDetailBody"></div><button id="openSearchRecord" class="primary" type="button">원래 화면에서 보기</button></dialog><script>
+/* Read-only search: only the current session's RLS-visible record fields are fetched. */
+const SEARCH_SOURCES=Object.freeze([
+ {table:'memories',label:'추억',page:'calendar',date:'date',title:'place_name',text:['text','place_name','place_address'],fields:'id,date,text,place_name,place_address',list:'#days'},
+ {table:'restaurants',label:'맛집',page:'restaurantMap',date:'visit_date',title:'name',text:['name','address','review'],fields:'id,name,address,review,visit_date',list:'#restaurantList'},
+ {table:'date_plans',label:'데이트 계획',page:'datePlan',date:'plan_date',title:'title',text:['title','place','memo'],fields:'id,title,place,memo,plan_date',list:'#datePlanList'},
+ {table:'watched_contents',label:'같이 본 것',page:'watched',date:'watch_date',title:'title',text:['title','review','content_type'],fields:'id,title,review,content_type,watch_date',list:'#watchedList'},
+ {table:'letters',label:'편지',page:'letters',date:'letter_date',title:'title',text:['title','content','writer_name'],fields:'id,title,content,writer_name,letter_date',list:'#lettersList'},
+ {table:'photobooth',label:'포토부스',page:'photobooth',date:'photo_date',title:'title',text:['title','memo'],fields:'id,title,memo,photo_date',list:'#photoboothList'},
+ {table:'date_bucket_list',label:'버킷리스트',page:'bucket',date:'created_at',title:'title',text:['title'],fields:'id,title,created_at',list:'#bucketList'},
+ {table:'daily_messages',label:'오늘의 한마디',page:'home',date:'message_date',title:null,text:['message'],fields:'id,message,message_date',list:null}
+]);
+function normalizeSearchText(value){return String(value??'').normalize('NFKC').toLocaleLowerCase('ko-KR');}
+function searchRecordMatches(source,row,tokens){const text=normalizeSearchText(source.text.map(field=>row[field]||'').join(' '));return tokens.every(token=>text.includes(token));}
+function searchDate(source,row){return String(row[source.date]||'').slice(0,10);}
+const GlobalSearch={version:0,results:[],limit:50,shown:0,
+ reset(){
+  this.version++;this.results=[];this.shown=0;
+  document.getElementById('recordSearchInput').value='';document.getElementById('searchResults').replaceChildren();document.getElementById('recordSearchStatus').textContent='';
+  document.getElementById('searchMore').hidden=true;document.getElementById('searchSubmit').disabled=false;
+  const dialog=document.getElementById('searchDetail');if(dialog.open)dialog.close();document.getElementById('searchDetailBody').replaceChildren();
+ },
+ async search(){
+  if(!authenticated)return;
+  const query=document.getElementById('recordSearchInput').value.trim();const status=document.getElementById('recordSearchStatus');
+  if(!query||query.length>120){status.textContent=query?'검색어는 120자 이하로 입력해 주세요.':'검색할 장소·메모·제목을 입력해 주세요.';return;}
+  const request=++this.version;const session=PrivateSession.version;const button=document.getElementById('searchSubmit');button.disabled=true;
+  this.results=[];this.shown=0;document.getElementById('searchResults').replaceChildren();document.getElementById('searchMore').hidden=true;status.textContent='기록을 검색하는 중…';
+  const tokens=query.split(/\s+/u).map(normalizeSearchText);
+  try{
+   await AppAuth.requireUser();PrivateSession.assert(session);
+   const outcomes=await Promise.allSettled(SEARCH_SOURCES.map(async source=>{
+    const matches=[];
+    for(let start=0;;start+=500){
+     if(start>=100000)throw new Error('Search source too large');
+     if(request!==this.version)throw new Error('Search superseded');
+     PrivateSession.assert(session);
+     const {data,error}=await supabaseClient.from(source.table).select(source.fields).order('id',{ascending:true}).range(start,start+499);
+     PrivateSession.assert(session);
+     if(error||!Array.isArray(data))throw new Error('Search source unavailable');
+     for(const row of data)if(searchRecordMatches(source,row,tokens))matches.push({source,row});
+     if(data.length<500)break;
+    }
+    return matches;
+   }));
+   if(request!==this.version||!authenticated||session!==PrivateSession.version)return;
+   this.results=outcomes.filter(result=>result.status==='fulfilled').flatMap(result=>result.value).sort((a,b)=>searchDate(b.source,b.row).localeCompare(searchDate(a.source,a.row))||a.source.label.localeCompare(b.source.label));
+   const failures=outcomes.map((outcome,index)=>outcome.status==='rejected'?SEARCH_SOURCES[index].label:null).filter(Boolean);
+   status.textContent=failures.length===SEARCH_SOURCES.length?'기록을 검색하지 못했어요. 연결과 접근 권한을 확인한 뒤 다시 검색해 주세요.':(this.results.length?`${this.results.length}개의 기록을 찾았어요.`:'일치하는 기록이 없어요.')+(failures.length?' 검색하지 못한 항목: '+failures.join(', ')+'. 연결을 확인한 뒤 다시 검색해 주세요.':'');
+   this.renderMore();
+  }catch{
+   if(request===this.version&&authenticated)status.textContent='검색을 완료하지 못했어요. 연결과 로그인 상태를 확인해 주세요.';
+  }finally{if(request===this.version)button.disabled=false;}
+ },
+ renderMore(){
+  if(!authenticated)return;
+  const end=Math.min(this.shown+this.limit,this.results.length);const fragment=document.createDocumentFragment();
+  for(let i=this.shown;i<end;i++){
+   const {source,row}=this.results[i];const button=document.createElement('button');button.type='button';button.className='search-result card';
+   const meta=document.createElement('span');meta.className='search-result-meta';meta.textContent=source.label+(searchDate(source,row)?' · '+searchDate(source,row):'');
+   const title=document.createElement('strong');title.textContent=(source.title&&row[source.title])||source.label;
+   const excerpt=document.createElement('p');excerpt.textContent=source.text.map(field=>row[field]).filter(Boolean).join(' · ');
+   button.append(meta,title,excerpt);button.addEventListener('click',()=>this.open(i));fragment.append(button);
+  }
+  document.getElementById('searchResults').append(fragment);this.shown=end;document.getElementById('searchMore').hidden=end>=this.results.length;
+ },
+ open(index){
+  if(!authenticated)return;
+  const item=this.results[index];if(!item)return;
+  const {source,row}=item;
+  if(source.table==='memories'){moveToDate(row.date);return;}
+  const content=document.getElementById('searchDetailBody');content.replaceChildren();
+  const heading=document.getElementById('searchDetailTitle');heading.textContent=(source.title&&row[source.title])||source.label;
+  const meta=document.createElement('p');meta.className='helper-text';meta.textContent=source.label+(searchDate(source,row)?' · '+searchDate(source,row):'');content.append(meta);
+  const labels={name:'이름',address:'주소',review:'리뷰',place:'장소',memo:'메모',title:'제목',content_type:'분류',content:'내용',writer_name:'작성자',message:'한마디'};
+  for(const field of source.text){if(!row[field])continue;const label=document.createElement('h3');label.textContent=labels[field]||'기록';const text=document.createElement('p');text.className='search-detail-text';text.textContent=String(row[field]);content.append(label,text);}
+  const openButton=document.getElementById('openSearchRecord');openButton.hidden=source.table==='daily_messages';
+  openButton.onclick=()=>{document.getElementById('searchDetail').close();if(source.page==='watched')setWatchedCategory(watchedCategory(row.content_type),false);showSection(source.page);this.highlight(source,row.id);};
+  document.getElementById('searchDetail').showModal();
+ },
+ highlight(source,id){
+  if(!source.list)return;
+  const container=document.querySelector(source.list);if(!container)return;const session=PrivateSession.version;
+  let observer,timer;
+  const find=()=>{if(!authenticated||session!==PrivateSession.version||currentPage!==source.page){observer?.disconnect();clearTimeout(timer);return true;}const card=[...container.querySelectorAll('[data-record-id]')].find(el=>el.dataset.recordId===String(id));if(!card)return false;observer?.disconnect();clearTimeout(timer);card.classList.add('search-highlight');card.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>card.classList.remove('search-highlight'),2500);return true;};
+  if(find())return;observer=new MutationObserver(find);observer.observe(container,{childList:true,subtree:true});timer=setTimeout(()=>observer.disconnect(),10000);
+ }
+};
+document.getElementById('recordSearchForm').addEventListener('submit',event=>{event.preventDefault();GlobalSearch.search();});
+document.getElementById('searchMore').addEventListener('click',()=>GlobalSearch.renderMore());
+
+</script><dialog id="photoViewer" aria-labelledby="photoViewerTitle"><div class="photo-viewer-header"><h2 id="photoViewerTitle" class="sr-only">사진 확대 보기</h2><span id="photoViewerCount" aria-live="polite"></span><button id="closePhotoViewer" type="button" aria-label="사진 닫기">×</button></div><div id="photoViewerStage"><img id="expandedPhoto" alt="추억 사진"/><p id="photoViewerStatus" role="status"></p></div><div class="photo-viewer-controls"><button id="previousPhoto" type="button" aria-label="이전 사진">‹</button><button id="nextPhoto" type="button" aria-label="다음 사진">›</button></div></dialog><script>
+/* Draft snapshots stay in memory; no passwords, records or photo data are persisted. */
+const DraftGuard={
+ baselines:new Map(),bypass:0,
+ fields:{home:['todayMessageInput'],calendar:['memoryText','placeSearch','photoInput'],restaurantMap:['restaurantDate','restaurantPageSearch','restaurantPageRating','restaurantReview'],datePlan:['planDate','planTitle','planPlace','planBudget','planMemo','planCompleted'],watched:['watchDate','contentType','contentTitle','contentRating','contentReview'],letters:['letterDate','letterWriter','letterTitle','letterContent'],photobooth:['photoboothDate','photoboothTitle','photoboothPhoto','photoboothMemo'],bucket:['bucketInput'],settingsCover:['homeCoverFile'],settingsPassword:['currentPassword','newPassword','confirmPassword']},
+ snapshot(scope){
+  const values=(this.fields[scope]||[]).map(id=>{const el=document.getElementById(id);if(!el)return null;if(el.type==='file')return [...el.files].map(file=>[file.name,file.size,file.lastModified]);if(el.type==='password')return el.value.length>0;if(el.type==='checkbox')return el.checked;return el.value;});
+  if(scope==='calendar')values.push(heartActive,selectedPlaceName,selectedPlaceAddress,selectedLatitude,selectedLongitude,newMemoryPhotoData.length);
+  if(scope==='restaurantMap')values.push(restaurantPageName,restaurantPageAddress,restaurantPageLatitude,restaurantPageLongitude);
+  return JSON.stringify(values);
+ },
+ scopes(page){return page==='settings'?['settingsCover','settingsPassword']:[page];},
+ clean(scope){this.baselines.set(scope,this.snapshot(scope));},
+ dirty(scope){return this.baselines.has(scope)&&this.baselines.get(scope)!==this.snapshot(scope);},
+ pending(page=currentPage){return this.scopes(page).some(scope=>this.dirty(scope));},
+ any(){return [...this.baselines.keys()].some(scope=>this.dirty(scope));},
+ busy(){return activeMutations.size>0||document.querySelector('[data-cover-action]:disabled')!==null||document.querySelector('#changePasswordForm button:disabled')!==null;},
+ allow(page=currentPage,otherPage=null){if(!authenticated||this.bypass)return true;if(this.busy()){alert('저장 중입니다. 완료된 뒤 이동해 주세요.');return false;}return !(this.pending(page)||(otherPage&&this.pending(otherPage)))||confirm('저장하지 않은 내용이 있어요. 저장하지 않고 이동할까요?');},
+ allowAll(){if(!authenticated||this.bypass)return true;if(this.busy()){alert('저장 중입니다. 완료된 뒤 이동해 주세요.');return false;}return !this.any()||confirm('저장하지 않은 내용이 있어요. 저장하지 않고 로그아웃할까요?');},
+ reset(){for(const scope of Object.keys(this.fields))this.clean(scope);},
+ resetSession(){
+  for(const ids of Object.values(this.fields))for(const id of ids){const el=document.getElementById(id);if(!el)continue;if(el.type==='checkbox')el.checked=false;else el.value='';}
+  memoryLoadVersion++;memoryPreviewVersion++;pendingMemoryPhotoReads=0;memoryPhotoReadFailed=false;calendarLoadVersion++;selectedDate='';memoryPhotosLoaded=false;heartActive=false;selectedPhotos=[];savedMemoryPhotoPaths=[];savedMemoryPreviewUrls=[];newMemoryPhotoData=[];
+  selectedPlaceName='';selectedPlaceAddress='';selectedLatitude=null;selectedLongitude=null;
+  restaurantPageName='';restaurantPageAddress='';restaurantPageLatitude=null;restaurantPageLongitude=null;
+  editingRestaurantId=null;editingDatePlanId=null;editingWatchedContentId=null;editingLetterId=null;editingPhotoboothId=null;editingPhotoboothPhotoPath=null;
+  document.getElementById('memoryBox').style.display='none';document.getElementById('photoPreview').replaceChildren();document.getElementById('photoboothPreview').replaceChildren();this.reset();
+ },
+ withoutPrompt(action){this.bypass++;try{return action();}finally{this.bypass--;}}
+};
+DraftGuard.reset();
+const guardedOpenMemory=openMemory;
+openMemory=async function(date){if(!DraftGuard.allow(currentPage,'calendar'))return false;const result=await guardedOpenMemory(date);if(selectedDate===date&&memoryPhotosLoaded)DraftGuard.clean('calendar');return result;};
+const guardedMoveToDate=moveToDate;
+moveToDate=function(date){if(!DraftGuard.allow(currentPage,'calendar'))return false;return DraftGuard.withoutPrompt(()=>guardedMoveToDate(date));};
+for(const name of ['editDatePlan','editLetter','editWatchedContent','editPhotobooth','editRestaurant']){
+ const original=window[name];window[name]=async function(...args){if(!DraftGuard.allow())return false;return original(...args);};
+}
+// Freeze editable controls during each save so captured input cannot be overwritten by typing mid-request.
+for(const [name,scope] of Object.entries({saveMemory:'calendar',saveTodayMessage:'home',saveRestaurantPage:'restaurantMap',saveDatePlan:'datePlan',saveWatchedContent:'watched',saveLetter:'letters',savePhotobooth:'photobooth',addBucketItem:'bucket'})){
+ const original=window[name];window[name]=async function(...args){
+  const controls=(DraftGuard.fields[scope]||[]).map(id=>document.getElementById(id)).filter(Boolean);
+  const states=controls.map(el=>[el,el.disabled]);controls.forEach(el=>el.disabled=true);
+  try{return await original(...args);}finally{for(const [el,disabled] of states)el.disabled=disabled;}
+ };
+}
+const guardedCoverAction=coverAction;
+coverAction=async function(action){const field=document.getElementById('homeCoverFile');const disabled=field.disabled;field.disabled=true;try{return await guardedCoverAction(action);}finally{field.disabled=disabled;}};
+const guardedPasswordChange=AppAuth.changePassword.bind(AppAuth);
+AppAuth.changePassword=async function(...args){const fields=[...document.querySelectorAll('#changePasswordForm input')];const states=fields.map(field=>field.disabled);fields.forEach(field=>field.disabled=true);try{return await guardedPasswordChange(...args);}finally{fields.forEach((field,index)=>field.disabled=states[index]);}};
+const guardedLogout=AppAuth.logout.bind(AppAuth);
+AppAuth.logout=async function(){if(!DraftGuard.allowAll())return;return guardedLogout();};
+window.addEventListener('beforeunload',event=>{if(authenticated&&(DraftGuard.any()||DraftGuard.busy())){event.preventDefault();event.returnValue='';}});
+const PhotoViewer={images:[],index:0,touch:null,
+ open(image){
+  if(!authenticated||!image?.src)return;
+  const group=image.closest('#photoPreview,#photoboothPreview,#homeCoverPreview')||image.closest('#photoboothList [data-record-id]');
+  this.images=(group?[...group.querySelectorAll('img')]:[image]).filter(item=>item.currentSrc||item.src).map(item=>({src:item.currentSrc||item.src,alt:item.alt||'추억 사진'}));
+  this.index=Math.max(0,(group?[...group.querySelectorAll('img')]:[image]).filter(item=>item.currentSrc||item.src).indexOf(image));
+  if(!this.images.length)return;
+  this.render();document.getElementById('photoViewer').showModal();document.body.classList.add('photo-viewer-open');
+ },
+ render(){
+  const image=document.getElementById('expandedPhoto');image.hidden=false;document.getElementById('photoViewerStatus').textContent='';
+  image.alt=this.images[this.index].alt;image.src=this.images[this.index].src;
+  document.getElementById('photoViewerCount').textContent=(this.index+1)+' / '+this.images.length;
+  document.getElementById('previousPhoto').hidden=this.images.length<2;document.getElementById('nextPhoto').hidden=this.images.length<2;
+ },
+ step(direction){if(this.images.length<2)return;this.index=(this.index+direction+this.images.length)%this.images.length;this.render();},
+ swipe(dx,dy){if(Math.abs(dx)>=60&&Math.abs(dx)>Math.abs(dy)*1.4)this.step(dx<0?1:-1);},
+ close(){const dialog=document.getElementById('photoViewer');if(dialog.open)dialog.close();},
+ clear(){this.images=[];this.index=0;this.touch=null;document.getElementById('expandedPhoto').removeAttribute('src');document.getElementById('photoViewerCount').textContent='';document.body.classList.remove('photo-viewer-open');}
+};
+const photoRoots='#photoPreview,#photoboothList,#photoboothPreview,#homeHero,#homeCoverPreview';
+function enablePhotoButtons(){document.querySelectorAll(photoRoots).forEach(root=>root.querySelectorAll('img').forEach(image=>{image.tabIndex=0;image.setAttribute('role','button');image.setAttribute('aria-label','사진 크게 보기');if(!image.alt)image.alt='추억 사진';}));}
+enablePhotoButtons();
+for(const root of document.querySelectorAll(photoRoots))new MutationObserver(enablePhotoButtons).observe(root,{childList:true,subtree:true});
+document.addEventListener('click',event=>{const image=event.target.closest?.('img');if(image?.closest(photoRoots)){event.preventDefault();PhotoViewer.open(image);}});
+document.addEventListener('keydown',event=>{const image=event.target;if(image.matches?.('img')&&image.closest(photoRoots)&&(event.key==='Enter'||event.key===' ')){event.preventDefault();PhotoViewer.open(image);}});
+document.getElementById('closePhotoViewer').addEventListener('click',()=>PhotoViewer.close());
+document.getElementById('previousPhoto').addEventListener('click',()=>PhotoViewer.step(-1));document.getElementById('nextPhoto').addEventListener('click',()=>PhotoViewer.step(1));
+document.getElementById('photoViewer').addEventListener('close',()=>PhotoViewer.clear());
+document.getElementById('photoViewer').addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();PhotoViewer.step(event.key==='ArrowRight'?1:-1);}});
+const photoStage=document.getElementById('photoViewerStage');
+photoStage.addEventListener('touchstart',event=>{PhotoViewer.touch=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY}:null;},{passive:true});
+photoStage.addEventListener('touchend',event=>{const start=PhotoViewer.touch;PhotoViewer.touch=null;if(start&&event.changedTouches.length===1)PhotoViewer.swipe(event.changedTouches[0].clientX-start.x,event.changedTouches[0].clientY-start.y);},{passive:true});
+photoStage.addEventListener('touchcancel',()=>{PhotoViewer.touch=null;},{passive:true});
+document.getElementById('expandedPhoto').addEventListener('error',event=>{event.target.hidden=true;document.getElementById('photoViewerStatus').textContent='사진을 불러오지 못했어요. 닫고 해당 기록을 다시 열어 주세요.';});
+
+</script><section id="gamesSection" class="page" style="display:none"><div class="game-tabs" role="tablist" aria-label="미니게임 선택"><button role="tab" aria-selected="true" data-photo-game="puzzle" onclick="PhotoGames.select('puzzle')" aria-controls="gameBoard">사진 퍼즐</button><button role="tab" aria-selected="false" data-photo-game="memory" onclick="PhotoGames.select('memory')" aria-controls="gameBoard">사진 기억력</button><button role="tab" aria-selected="false" data-photo-game="taste" onclick="PhotoGames.select('taste')" aria-controls="gameBoard">취향 맞히기</button></div><p id="gameRules" class="helper-text"></p><div class="game-options"><label for="gameDifficulty">난이도</label><select id="gameDifficulty"><option value="normal">기본 · 퍼즐 4×4 / 기억력 12쌍</option><option value="hard">어려움 · 퍼즐 5×5 / 기억력 16쌍</option></select></div><label class="check-label"><input id="autoGamePhoto" type="checkbox" checked/>사진 게임 완성 후 자동으로 다음 판</label><p id="gameMetrics" class="helper-text"></p><p id="gameStatus" class="game-status" role="status" aria-live="polite"></p><div class="game-stage"><div id="gameBoard"></div><div id="gameHint" hidden><img id="gameHintImage" alt="퍼즐 원본 힌트"/></div></div><div class="game-actions"><button id="newGame" type="button" class="primary">새 판 · 다른 사진</button><button id="showGameHint" type="button">원본 3초 보기 (+15초)</button></div><p class="helper-text">사진 게임은 기존 추억 사진을 재사용하고 서버에 점수를 저장하지 않아요. 취향 맞히기는 두 계정을 연결하기 위한 별도 게임 테이블만 사용해요. 같은 사진이 여러 파일이면 가능한 한 중복을 제외합니다.</p></section><script>
+// Pure game rules. Runtime HTML embeds the same functions without module exports.
+function gameShuffle(items,random=Math.random){
+ const result=[...items];for(let i=result.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;
+}
+function puzzleSolved(order){return order.every((tile,index)=>tile===index);}
+function makePuzzle(size,random=Math.random){
+ const base=Array.from({length:size*size},(_,i)=>i);
+ for(let attempt=0;attempt<20;attempt++){const result=gameShuffle(base,random);if(result.filter((tile,index)=>tile!==index).length>=Math.ceil(base.length*.75))return result;}
+ const shift=1+Math.floor(random()*(base.length-1));return base.map((_,index)=>base[(index+shift)%base.length]);
+}
+function swapPuzzle(order,first,second){const result=[...order];if(first>=0&&second>=0&&first<result.length&&second<result.length)[result[first],result[second]]=[result[second],result[first]];return result;}
+function makeMemoryDeck(photos,random=Math.random){return gameShuffle(photos.flatMap((photo,index)=>[{pair:index,photo},{pair:index,photo}]),random);}
+function chooseGamePhotos(pool,count,last=[],random=Math.random){
+ const key=photo=>photo.bucket+':'+photo.path;
+ const fresh=pool.filter(photo=>!last.includes(key(photo))),prior=pool.filter(photo=>last.includes(key(photo)));
+ return [...gameShuffle(fresh,random),...gameShuffle(prior,random)].slice(0,count);
+}
+
+// Light four-option prompts; no daily obligation or stored personal answer history.
+const TASTE_QUESTIONS=Object.freeze([
+ ['갑자기 반나절이 비었다면?',['동네 산책','카페에서 수다','집에서 영화','안 가본 동네 탐방']],
+ ['여행 첫날 가장 먼저 하고 싶은 건?',['현지 맛집','숙소에서 쉬기','유명 명소','계획 없이 걷기']],
+ ['비 오는 날 데이트는?',['따뜻한 국물 먹기','집에서 영화','전시 구경','빗소리 들으며 카페']],
+ ['야식 하나만 고른다면?',['치킨','떡볶이','라면','피자']],
+ ['선물에서 가장 좋은 건?',['갖고 싶던 물건','손편지','함께할 체험','예상 못 한 깜짝 선물']],
+ ['사진을 찍을 때 나는?',['자연스러운 순간','예쁜 배경','웃긴 표정','음식과 풍경']],
+ ['주말 아침에 가장 끌리는 건?',['늦잠','브런치','가벼운 운동','일찍 나들이']],
+ ['바다에 가면 먼저 하고 싶은 건?',['물에 들어가기','해변 걷기','사진 찍기','바다 보며 먹기']],
+ ['놀이공원에서 나는?',['무서운 놀이기구','분위기와 사진','먹거리 탐방','퍼레이드 구경']],
+ ['영화를 고를 때 우선하는 건?',['스토리','배우','영상과 음악','둘이 편하게 보기']],
+ ['깜짝 하루 여행지는?',['조용한 바닷가','산과 숲','낯선 도시','온천과 숙소']],
+ ['아이스크림을 고른다면?',['초콜릿','과일 맛','바닐라','민트나 특이한 맛']],
+ ['데이트 계획 방식은?',['시간까지 자세히','핵심 장소만','당일 기분대로','상대방 추천대로']],
+ ['사람 많은 곳에 갔다면?',['그대로 즐기기','조용한 곳 찾기','조금 기다리기','다음에 다시 오기']],
+ ['기념일 저녁은?',['분위기 좋은 식당','단골 맛집','함께 요리','배달과 편한 시간']],
+ ['카페 자리 하나를 고르면?',['창가','구석의 조용한 자리','야외 테라스','편한 소파']],
+ ['휴대폰 배경 사진은?',['둘이 찍은 사진','풍경','반려동물이나 캐릭터','깔끔한 기본 화면']],
+ ['음식을 나눠 먹을 때는?',['서로 다른 메뉴','같은 메뉴 두 개','여러 개 조금씩','상대방 선택에 맞추기']],
+ ['공연을 고른다면?',['뮤지컬','밴드 공연','연극','클래식이나 재즈']],
+ ['겨울 데이트로 끌리는 건?',['따뜻한 실내','눈 구경','겨울 바다','맛있는 것 먹기']],
+ ['도시락을 같이 만든다면?',['샌드위치','김밥','볶음밥','예쁘게 꾸민 간식']],
+ ['숙소를 고를 때 중요한 건?',['전망','침대와 편안함','위치','독특한 분위기']],
+ ['둘이 새 취미를 한다면?',['요리','운동','그림이나 만들기','사진 찍기']],
+ ['오래 걷다가 쉬고 싶을 때는?',['카페','공원 벤치','맛집','숙소나 집']],
+ ['여행 중 예상 밖의 시간이 생기면?',['근처 명소 찾기','쉬기','현지 음식 먹기','그냥 걸어보기']],
+ ['둘만의 사진 중 마음에 드는 건?',['처음 함께 찍은 사진','여행 사진','일상 속 자연스러운 사진','웃긴 사진']],
+ ['지금 음료 하나를 고른다면?',['커피','차','과일 음료','탄산']],
+ ['갑자기 작은 선물을 받는다면?',['꽃','간식','손편지','실용적인 물건']],
+ ['다시 가고 싶은 장소는?',['첫 데이트 장소','가장 좋았던 여행지','자주 가는 동네','아직 안 가본 곳']],
+ ['낯선 메뉴에 도전할 때는?',['바로 도전','상대방과 나눠서','후기를 먼저 보기','익숙한 메뉴 고르기']],
+ ['일몰을 볼 수 있다면?',['바닷가','강변','높은 전망대','우리 동네 산책길']],
+ ['서점에 가면 먼저 보는 건?',['소설','에세이','취미나 여행','표지가 끌리는 책']],
+ ['집에서 둘이 쉬는 날은?',['게임','요리','영화나 드라마','각자 쉬면서 같이 있기']],
+ ['맛집 웨이팅이 길다면?',['기다리기','근처 다른 집','포장하기','다음에 예약']],
+ ['데이트 마무리로 좋은 건?',['조금 더 산책','달달한 디저트','사진 같이 보기','편하게 쉬기']],
+ ['같이 배워보고 싶은 건?',['댄스','악기','도자기','새로운 언어']]
+].map(([question,options])=>Object.freeze({question,options:Object.freeze(options)})));
+function pickTasteQuestion(questions,last,random=Math.random){const pool=questions.map((_,i)=>i).filter(i=>i!==last);return pool[Math.floor(random()*pool.length)]??0;}
+
+/* Session-only photo games: no uploads, saved scores, copied Storage objects or new DB tables. */
+const PhotoGames={mode:'puzzle',version:0,pool:[],metadataAt:0,cache:new Map(),last:{puzzle:[],memory:[]},round:null,tasteScore:{correct:0,total:0},lastQuestion:-1,controller:null,timers:new Set(),clock:null,lastTick:0,
+ key(photo){return photo.bucket+':'+photo.path;},
+ status(text){document.getElementById('gameStatus').textContent=text;},
+ later(action,delay){const version=this.version;const id=setTimeout(()=>{this.timers.delete(id);if(version===this.version&&authenticated&&currentPage==='games')action();},delay);this.timers.add(id);return id;},
+ clearTimers(){for(const id of this.timers)clearTimeout(id);this.timers.clear();},
+ leave(){if(typeof SharedTaste!=="undefined")SharedTaste.stop();this.version++;this.controller?.abort();this.clearTimers();clearInterval(this.clock);this.clock=null;this.round=null;document.getElementById('gameBoard').replaceChildren();document.getElementById('gameHintImage').removeAttribute('src');document.getElementById('gameHint').hidden=true;},
+ reset(){this.leave();for(const entry of this.cache.values())URL.revokeObjectURL(entry.url);this.cache.clear();this.pool=[];this.metadataAt=0;this.last={puzzle:[],memory:[]};this.tasteScore={correct:0,total:0};this.lastQuestion=-1;document.getElementById('gameMetrics').textContent='';this.status('');},
+ async metadata(){
+  const session=PrivateSession.version;const sources=[['memories','id,photos'],['photobooth','id,photo_path']];
+  const outcomes=await Promise.allSettled(sources.map(async([table,fields])=>{
+   const photos=[];
+   for(let start=0;;start+=500){
+    if(start>=10000)throw new Error('Too many photo records');PrivateSession.assert(session);
+    const {data,error}=await supabaseClient.from(table).select(fields).order('id',{ascending:true}).range(start,start+499);
+    PrivateSession.assert(session);if(error||!Array.isArray(data))throw new Error('Photo list unavailable');
+    for(const row of data){const paths=table==='memories'?(Array.isArray(row.photos)?row.photos:[]):[row.photo_path];for(const path of paths)if(typeof path==='string'&&path)photos.push({bucket:'photos',path});}
+    if(data.length<500)break;
+   }
+   return photos;
+  }));
+  PrivateSession.assert(session);
+  const all=outcomes.filter(item=>item.status==='fulfilled').flatMap(item=>item.value);
+  if(HomeCover.path)all.push({bucket:HomeCover.bucket,path:HomeCover.path});
+  this.pool=[...new Map(all.map(photo=>[this.key(photo),photo])).values()];this.metadataAt=Date.now();
+  return outcomes.some(item=>item.status==='rejected');
+ },
+ async thumbnail(photo,version){
+  const key=this.key(photo);if(this.cache.has(key)){const entry=this.cache.get(key);this.cache.delete(key);this.cache.set(key,entry);return entry;}
+  const assert=()=>{if(version!==this.version||!authenticated||currentPage!=='games')throw new Error('Round cancelled');};assert();
+  const {data,error}=await supabaseClient.storage.from(photo.bucket).createSignedUrl(photo.path,3600);assert();
+  if(error||!data?.signedUrl)throw new Error('Private photo unavailable');
+  const response=await fetch(data.signedUrl,{signal:this.controller.signal});if(!response.ok)throw new Error('Photo download failed');if(Number(response.headers.get('content-length'))>25*1024*1024){await response.body?.cancel();throw new Error('Photo too large for a game');}
+  const blob=await response.blob();assert();
+  if(blob.size>25*1024*1024)throw new Error('Photo too large for a game');
+  const sourceUrl=URL.createObjectURL(blob);let image;
+  try{
+   image=new Image();image.src=sourceUrl;await image.decode();assert();
+   const canvas=document.createElement('canvas');canvas.width=canvas.height=384;const context=canvas.getContext('2d');
+   const side=Math.min(image.naturalWidth,image.naturalHeight);if(!side)throw new Error('Invalid photo');
+   context.drawImage(image,(image.naturalWidth-side)/2,(image.naturalHeight-side)/2,side,side,0,0,384,384);
+   const small=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('Thumbnail failed')),'image/jpeg',.78));assert();
+   const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',await small.arrayBuffer()))].map(x=>x.toString(16).padStart(2,'0')).join('');assert();
+   const entry={...photo,url:URL.createObjectURL(small),hash};this.cache.set(key,entry);
+   while(this.cache.size>32){const oldest=this.cache.keys().next().value;URL.revokeObjectURL(this.cache.get(oldest).url);this.cache.delete(oldest);}
+   return entry;
+  }finally{URL.revokeObjectURL(sourceUrl);if(image)image.removeAttribute('src');}
+ },
+ async enter(){
+  this.leave();if(this.mode==='taste'){await this.start();return;}const version=this.version;this.controller=new AbortController();this.status('사진 목록을 확인하는 중…');this.loading(true);
+  try{const partial=await this.metadata();if(version!==this.version||currentPage!=='games'||!authenticated)return;this.partial=partial;await this.start(false);}
+  catch{if(version===this.version&&authenticated)this.status('사진을 불러오지 못했어요. 연결과 사진 접근 권한을 확인해 주세요.');}
+  finally{if(version===this.version)this.loading(false);}
+ },
+ loading(value){document.getElementById('newGame').disabled=value;document.getElementById('gameDifficulty').disabled=value;document.querySelectorAll('[data-photo-game]').forEach(button=>button.disabled=value);},
+ async select(mode){if(mode===this.mode&&this.round)return;this.mode=mode;document.querySelector('.game-options').hidden=mode==='taste';document.getElementById('autoGamePhoto').closest('label').hidden=mode==='taste';document.querySelectorAll('[data-photo-game]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.photoGame===mode)));await this.start();},
+ async start(refresh=false){
+  if(!authenticated||currentPage!=='games')return;
+  this.leave();document.getElementById('newGame').textContent=this.mode==='taste'?'새 질문':'새 판 · 다른 사진';const version=this.version;this.controller=new AbortController();this.loading(true);this.status('이번 판의 사진을 준비하는 중…');document.getElementById('gameMetrics').textContent='';
+  try{
+   if(this.mode==='taste'){await this.startTaste(refresh);return;}
+   if(refresh||Date.now()-this.metadataAt>300000) this.partial=await this.metadata();
+   if(version!==this.version||!authenticated||currentPage!=='games')return;
+   if(!this.pool.length){this.status(this.partial?'사진 목록을 확인하지 못했어요. 연결과 접근 권한을 확인해 주세요.':'사진이 있는 추억이나 포토부스를 먼저 추가해 주세요.');return;}
+   const hard=document.getElementById('gameDifficulty').value==='hard';const count=this.mode==='puzzle'?1:(hard?16:12);
+   const candidates=chooseGamePhotos(this.pool,Math.min(this.pool.length,count+4),this.last[this.mode]);const photos=[];const hashes=new Set();
+   for(const candidate of candidates){
+    try{const entry=await this.thumbnail(candidate,version);if(!hashes.has(entry.hash)){photos.push(entry);hashes.add(entry.hash);}if(photos.length>=count)break;}
+    catch(error){if(version!==this.version)throw error;}
+   }
+   if(version!==this.version||!authenticated||currentPage!=='games')return;
+   if(photos.length<(this.mode==='memory'?2:1)){this.status(this.mode==='memory'?'기억력 게임에는 읽을 수 있는 서로 다른 사진이 2장 이상 필요해요.':'읽을 수 있는 사진이 없어요. 다른 사진을 추가하거나 권한을 확인해 주세요.');return;}
+   this.last[this.mode]=photos.map(photo=>this.key(photo));
+   this.round={photos,hard,moves:0,elapsed:0,complete:false,selected:null,hints:0,locked:false};
+   const note=(this.partial?'일부 사진 목록을 읽지 못했어요. 가능한 사진으로 진행합니다. ':'')+(this.mode==='memory'&&photos.length<count?`사진 ${photos.length}장으로 ${photos.length}쌍을 진행합니다. `:'');
+   this.round.note=note;
+   if(this.mode==='puzzle'){
+    this.round.size=hard?5:4;this.round.order=makePuzzle(this.round.size);this.status(note+'두 조각을 차례로 눌러 위치를 바꿔 주세요.');
+   }else{
+    this.round.deck=makeMemoryDeck(photos);this.round.faceUp=new Set(this.round.deck.map((_,i)=>i));this.round.matched=new Set();this.round.flipped=[];this.round.locked=true;this.round.preview=true;
+    this.status(note+'3초 동안 사진 위치를 기억하세요.');
+    this.later(()=>{this.round.faceUp.clear();this.round.locked=false;this.round.preview=false;this.status(note+'같은 사진 두 장을 찾아 주세요.');this.render();},3000);
+   }
+   this.render();this.lastTick=performance.now();this.clock=setInterval(()=>{const now=performance.now();if(this.round&&!this.round.complete&&!document.hidden&&currentPage==='games'&&!this.round.preview)this.round.elapsed+=(now-this.lastTick)/1000;this.lastTick=now;this.metrics();},500);
+  }catch{if(version===this.version&&authenticated)this.status('사진 준비에 실패했어요. 다시 시작해 주세요.');}
+  finally{if(version===this.version)this.loading(false);}
+ },
+ metrics(){if(!this.round)return;if(this.mode==='taste'){document.getElementById('gameMetrics').textContent='다른 계정·기기와 연결';return;}const seconds=Math.floor(this.round.elapsed);document.getElementById('gameMetrics').textContent=(this.mode==='puzzle'?`${this.round.size}×${this.round.size} · 교환 ${this.round.moves}번`:`${this.round.photos.length}쌍 · 시도 ${this.round.moves}번`)+` · ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;},
+ render(){
+  if(!this.round)return;if(this.mode==='taste'){this.renderTaste();return;}const round=this.round,board=document.getElementById('gameBoard');board.replaceChildren();board.className=this.mode==='puzzle'?'puzzle-board':'memory-board';
+  document.getElementById('gameRules').textContent=this.mode==='puzzle'?`${round.size}×${round.size} 사진 조각 맞추기 · 원본 힌트는 +15초`:`사진 ${round.photos.length}쌍 맞추기 · 두 장씩 뒤집어 같은 사진 찾기`;
+  const hint=document.getElementById('showGameHint');hint.hidden=this.mode!=='puzzle';hint.disabled=round.complete||round.locked||round.hints>=(round.hard?1:3);
+  if(this.mode==='puzzle'){
+   board.style.setProperty('--puzzle-size',round.size);
+   round.order.forEach((tile,index)=>{const button=document.createElement('button');button.type='button';button.className='puzzle-tile';button.setAttribute('aria-label',`사진 조각 ${index+1}`);button.setAttribute('aria-pressed',String(index===round.selected));button.style.backgroundImage=`url(${JSON.stringify(round.photos[0].url)})`;button.style.backgroundSize=`${round.size*100}% ${round.size*100}%`;button.style.backgroundPosition=`${(tile%round.size)/(round.size-1)*100}% ${Math.floor(tile/round.size)/(round.size-1)*100}%`;button.disabled=round.complete||round.locked;button.onclick=()=>this.pickTile(index);board.append(button);});
+  }else{
+   round.deck.forEach((card,index)=>{const button=document.createElement('button');button.type='button';button.className='memory-card';const up=round.faceUp.has(index)||round.matched.has(card.pair);button.classList.toggle('face-up',up);button.classList.toggle('matched',round.matched.has(card.pair));button.setAttribute('aria-label',`카드 ${index+1}${round.matched.has(card.pair)?' 맞춤':up?' 공개':' 뒤집힘'}`);button.setAttribute('aria-pressed',String(up));button.disabled=round.complete||round.locked||up;
+    const back=document.createElement('span');back.textContent='♥';back.setAttribute('aria-hidden','true');const image=document.createElement('img');image.src=card.photo.url;image.alt='';image.draggable=false;button.append(back,image);button.onclick=()=>this.flip(index);board.append(button);});
+  }
+  this.metrics();
+ },
+ pickTile(index){
+  const round=this.round;if(!round||round.locked||round.complete)return;
+  if(round.selected===null){round.selected=index;}else if(round.selected===index){round.selected=null;}else{round.order=swapPuzzle(round.order,round.selected,index);round.selected=null;round.moves++;if(puzzleSolved(round.order)){this.win();return;}}
+  this.render();
+ },
+ flip(index){
+  const round=this.round;if(!round||round.locked||round.complete||round.faceUp.has(index)||round.matched.has(round.deck[index].pair))return;
+  round.faceUp.add(index);round.flipped.push(index);
+  if(round.flipped.length===2){round.moves++;const [a,b]=round.flipped;
+   if(round.deck[a].pair===round.deck[b].pair){round.matched.add(round.deck[a].pair);round.flipped=[];if(round.matched.size===round.photos.length){this.win();return;}}
+   else{round.locked=true;this.later(()=>{for(const card of round.flipped)round.faceUp.delete(card);round.flipped=[];round.locked=false;this.render();},850);}
+  }
+  this.render();
+ },
+ hint(){const round=this.round;if(!round||this.mode!=='puzzle'||round.complete||round.locked||round.hints>=(round.hard?1:3))return;round.hints++;round.elapsed+=15;round.locked=true;document.getElementById('gameHintImage').src=round.photos[0].url;document.getElementById('gameHint').hidden=false;this.render();this.later(()=>{document.getElementById('gameHint').hidden=true;round.locked=false;this.render();},3000);},
+ startTaste(refresh=false){return SharedTaste.enter(refresh);},
+ renderTaste(){return SharedTaste.render();},
+ win(){this.round.complete=true;this.round.locked=false;clearInterval(this.clock);this.render();this.status('완성했어요! '+(document.getElementById('autoGamePhoto').checked?'4초 뒤 새 사진으로 다음 판을 시작합니다.':'새 판 버튼으로 다음 사진을 만나보세요.'));if(document.getElementById('autoGamePhoto').checked)this.later(()=>{if(!document.hidden)this.start();},4000);}
+};
+document.getElementById('newGame').addEventListener('click',()=>PhotoGames.start(true));
+document.getElementById('gameDifficulty').addEventListener('change',()=>PhotoGames.start());
+document.getElementById('showGameHint').addEventListener('click',()=>PhotoGames.hint());
+document.getElementById('autoGamePhoto').addEventListener('change',event=>{if(PhotoGames.round?.complete){PhotoGames.clearTimers();if(event.target.checked)PhotoGames.later(()=>{if(!document.hidden)PhotoGames.start();},4000);}});
+
+/* Cross-device taste game. Secret choices are held by protected server functions, not public rows. */
+const SharedTaste={user:null,current:null,questionIndex:-1,request:0,revision:0,poll:null,busy:false,refreshing:false,compose:false,
+ stop(){this.request++;this.revision++;clearInterval(this.poll);this.poll=null;this.user=null;this.current=null;this.busy=false;this.refreshing=false;this.compose=false;},
+ async enter(forceNew=false){
+  this.stop();const version=this.request;this.compose=forceNew;
+  PhotoGames.round={complete:false};document.getElementById('gameBoard').replaceChildren();PhotoGames.status('다른 기기의 게임 상태를 확인하는 중…');
+  try{const user=await AppAuth.requireUser();if(version!==this.request)return;this.user=user.id;await this.refresh(version,true);if(version===this.request&&authenticated&&currentPage==='games'&&PhotoGames.mode==='taste')this.poll=setInterval(()=>{if(!document.hidden&&!this.busy&&!this.refreshing)this.refresh(this.request);},3000);}
+  catch{if(version===this.request&&authenticated)PhotoGames.status('게임 연결을 확인하지 못했어요. 별도 게임 SQL과 두 사용자 등록 상태를 확인해 주세요.');}
+ },
+ valid(version){return version===this.request&&authenticated&&currentPage==='games'&&PhotoGames.mode==='taste';},
+ async refresh(version=this.request,initial=false){
+  if(!this.valid(version)||this.busy||this.refreshing)return;const revision=this.revision;this.refreshing=true;
+  try{const {data,error}=await supabaseClient.rpc('taste_get_round');if(!this.valid(version)||revision!==this.revision)return;if(error)throw new Error('Game state unavailable');
+   if(!data){if(this.compose&&this.questionIndex>=0&&!initial)return;this.current=null;if(this.questionIndex<0||initial)this.pickQuestion();this.compose=true;this.render();return;}
+   if(data.question_version!==1||!TASTE_QUESTIONS[data.question_index]){PhotoGames.status('게임 질문 버전이 달라요. 두 기기에서 사이트를 새로고침해 주세요.');return;}
+   if(this.compose&&data.state!=='waiting'&&!initial)return;
+   if(this.compose&&data.state!=='waiting'){this.current=null;this.pickQuestion();this.render();return;}
+   const changed=JSON.stringify(this.current)!==JSON.stringify(data);this.current=data;this.compose=false;if(changed||initial)this.render();
+  }catch{if(this.valid(version))PhotoGames.status('기기 간 연결에 실패했어요. 게임 SQL 설치·로그인·네트워크를 확인해 주세요.');}
+  finally{if(version===this.request)this.refreshing=false;}
+ },
+ pickQuestion(){this.questionIndex=pickTasteQuestion(TASTE_QUESTIONS,PhotoGames.lastQuestion);PhotoGames.lastQuestion=this.questionIndex;},
+ async action(name,args){
+  if(this.busy||!this.user)return;this.revision++;const version=this.request;this.busy=true;this.render();
+  try{const {data,error}=await supabaseClient.rpc(name,args);if(!this.valid(version))return;if(error)throw new Error('Game action rejected');this.current=data;this.compose=false;this.render();}
+  catch{if(this.valid(version))PhotoGames.status('진행하지 못했어요. 상대방이 먼저 진행했거나 연결이 끊겼을 수 있어요. 잠시 후 다시 시도해 주세요.');}
+  finally{if(version===this.request){this.busy=false;this.render();}}
+ },
+ render(){
+  if(!this.valid(this.request))return;
+  const board=document.getElementById('gameBoard');board.replaceChildren();board.className='taste-board';document.getElementById('showGameHint').hidden=true;document.getElementById('newGame').textContent='새 질문 / 새로고침';document.getElementById('newGame').disabled=this.busy;
+  document.getElementById('gameRules').textContent='서로 다른 계정·기기에서 상대방의 취향을 맞혀보세요.';
+  document.getElementById('gameMetrics').textContent='답을 고른 사람은 문제를 내고, 상대방은 한 번 추측합니다.';
+  if(this.current?.state==='cancelled'){PhotoGames.status('취소된 판이에요. 새 질문 버튼으로 다시 시작할 수 있어요.');return;}
+  const index=this.current?.question_index??this.questionIndex;if(!TASTE_QUESTIONS[index])return;const question=TASTE_QUESTIONS[index];
+  const heading=document.createElement('h3');heading.textContent=question.question;board.append(heading);
+  const choosing=!this.current;const mine=this.current?.chooser_id===this.user;
+  if(this.current?.state==='waiting'&&mine){
+   const message=document.createElement('p');message.textContent='답을 골랐어요. 상대방이 같은 사이트의 미니게임 → 취향 맞히기에 접속하면 문제가 보입니다.';board.append(message);
+   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='내 문제 취소';cancel.disabled=this.busy;cancel.onclick=()=>{if(confirm('상대방에게 낸 문제를 취소할까요?'))this.action('taste_cancel_round',{round_id:this.current.id});};board.append(cancel);PhotoGames.status('상대방의 추측을 기다리는 중…');return;
+  }
+  const complete=this.current?.state==='complete';
+  if(complete){PhotoGames.round={complete:true};PhotoGames.status(this.current.correct?'맞혔어요! 서로의 선택이 통했네요.':'이번에는 달랐네요! 실제 선택을 확인해 보세요.');}
+  else PhotoGames.status(choosing?'먼저 나의 답을 고르면 상대방에게 문제가 생깁니다.':'상대방이 골랐을 답을 예상해 보세요. 제출 전까지 정답은 공개되지 않습니다.');
+  const options=document.createElement('div');options.className='taste-options';
+  question.options.forEach((label,option)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=complete||this.busy;
+   if(complete){if(option===this.current.answer)button.classList.add('correct-choice');if(option===this.current.guess&&this.current.guess!==this.current.answer)button.classList.add('wrong-choice');}
+   button.onclick=()=>choosing?this.action('taste_start_round',{question_index:index,choice:option}):this.action('taste_guess_round',{round_id:this.current.id,guess:option});options.append(button);
+  });board.append(options);
+  if(complete){const result=document.createElement('p');result.textContent='실제 선택: '+question.options[this.current.answer];board.append(result);}
+ }
+};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authenticated&&currentPage==='games'&&PhotoGames.mode==='taste')SharedTaste.refresh();});
+
+</script></body>
+</html>
