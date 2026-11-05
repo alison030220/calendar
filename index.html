@@ -931,12 +931,12 @@ body.photo-viewer-open{overflow:hidden}
 <link rel="manifest" href="./manifest.webmanifest"/><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2"/>
 </head>
 <body>
-<main class="login-screen" id="loginBox"><form class="login-form" id="loginForm"><h1 class="brand">Doyoung <span>♥</span> Hwain</h1><label class="sr-only" for="loginEmail">이메일 주소</label><input autocomplete="username" id="loginEmail" placeholder="이메일 주소" required="" type="email" autocapitalize="none" spellcheck="false"/><label class="sr-only" for="loginPassword">Password</label><input autocomplete="current-password" id="loginPassword" placeholder="Password" required="" type="password"/><button class="primary" id="loginButton" type="submit">Login</button><p aria-live="polite" id="loginMessage" role="status"></p></form>
+<main class="login-screen" id="loginBox"><form class="login-form" id="loginForm"><h1 class="brand">Doyeong <span>♥</span> Hwain</h1><label class="sr-only" for="loginEmail">이메일 주소</label><input autocomplete="username" id="loginEmail" placeholder="이메일 주소" required="" type="email" autocapitalize="none" spellcheck="false"/><label class="sr-only" for="loginPassword">Password</label><input autocomplete="current-password" id="loginPassword" placeholder="Password" required="" type="password"/><button class="primary" id="loginButton" type="submit">Login</button><p aria-live="polite" id="loginMessage" role="status"></p></form>
 </main>
 <!-- 제목 -->
 
 <!-- 메뉴 -->
-<header hidden="" id="appHeader"><button aria-label="Home" class="icon-button" id="homeButton" onclick="showSection('home')">‹</button><h1 class="brand" id="pageTitle">Doyoung <span>♥</span> Hwain</h1><button aria-controls="mainMenu" aria-expanded="false" aria-label="Open menu" class="icon-button" id="menuButton" onclick="openMenu()">☰</button></header><dialog aria-label="Menu" id="mainMenu"><div class="menu-header"><span class="brand">Doyoung <span>♥</span> Hwain</span><button aria-label="Close menu" class="icon-button" onclick="closeMenu()">×</button></div><nav aria-label="Main navigation"><button onclick="showSection('calendar')">Calendar<span aria-hidden="true">›</span></button><button onclick="showSection('map')">Places<span aria-hidden="true">›</span></button><button onclick="showSection('restaurantMap')">Restaurants<span aria-hidden="true">›</span></button><button onclick="showSection('datePlan')">Date Planner<span aria-hidden="true">›</span></button><button onclick="showSection('watched')">Watched Together<span aria-hidden="true">›</span></button><button onclick="showSection('games')">Mini Games<span aria-hidden="true">›</span></button><button onclick="showSection('letters')">Letters<span aria-hidden="true">›</span></button><button onclick="showSection('photobooth')">Photobooth<span aria-hidden="true">›</span></button><button onclick="showSection('bucket')">Bucket List<span aria-hidden="true">›</span></button><button onclick="showSection('stats')">Monthly Memories<span aria-hidden="true">›</span></button><button onclick="showSection('search')">전체 기록 검색<span aria-hidden="true">›</span></button></nav><button class="settings-link" onclick="showSection('settings')">Settings <span aria-hidden="true">›</span></button></dialog>
+<header hidden="" id="appHeader"><button aria-label="Home" class="icon-button" id="homeButton" onclick="showSection('home')">‹</button><h1 class="brand" id="pageTitle">Doyeong <span>♥</span> Hwain</h1><button aria-controls="mainMenu" aria-expanded="false" aria-label="Open menu" class="icon-button" id="menuButton" onclick="openMenu()">☰</button></header><dialog aria-label="Menu" id="mainMenu"><div class="menu-header"><span class="brand">Doyeong <span>♥</span> Hwain</span><button aria-label="Close menu" class="icon-button" onclick="closeMenu()">×</button></div><nav aria-label="Main navigation"><button onclick="showSection('calendar')">Calendar<span aria-hidden="true">›</span></button><button onclick="showSection('map')">Places<span aria-hidden="true">›</span></button><button onclick="showSection('restaurantMap')">Restaurants<span aria-hidden="true">›</span></button><button onclick="showSection('datePlan')">Date Planner<span aria-hidden="true">›</span></button><button onclick="showSection('watched')">Watched Together<span aria-hidden="true">›</span></button><button onclick="showSection('games')">Mini Games<span aria-hidden="true">›</span></button><button onclick="showSection('letters')">Letters<span aria-hidden="true">›</span></button><button onclick="showSection('photobooth')">Photobooth<span aria-hidden="true">›</span></button><button onclick="showSection('bucket')">Bucket List<span aria-hidden="true">›</span></button><button onclick="showSection('stats')">Monthly Memories<span aria-hidden="true">›</span></button><button onclick="showSection('search')">전체 기록 검색<span aria-hidden="true">›</span></button></nav><button class="settings-link" onclick="showSection('settings')">Settings <span aria-hidden="true">›</span></button></dialog>
 <!-- 데이트 플래너 -->
 <div class="page" id="datePlanSection" style="display: none;">
 
@@ -996,7 +996,7 @@ body.photo-viewer-open{overflow:hidden}
 <label class="field-label" for="letterDate">Date</label><input id="letterDate" type="date"/>
 <label class="field-label" for="letterWriter">Writer</label><select id="letterWriter">
 <option value="">작성자 선택</option>
-<option value="Doyoung">Doyoung</option>
+<option value="Doyeong">Doyeong</option>
 <option value="Hwain">Hwain</option>
 </select>
 <label class="field-label" for="letterTitle">Title</label><input id="letterTitle" placeholder="편지 제목" type="text"/>
@@ -4372,9 +4372,9 @@ function updatePageHeader(section) {
   const header = document.getElementById("appHeader");
   header.classList.toggle("is-home", section === "home");
   const title = document.getElementById("pageTitle");
-  if (section === "home") title.innerHTML = "Doyoung <span>♥</span> Hwain";
+  if (section === "home") title.innerHTML = "Doyeong <span>♥</span> Hwain";
   else title.textContent = pageNames[section];
-  document.title = pageNames[section] + " · Doyoung ♥ Hwain";
+  document.title = pageNames[section] + " · Doyeong ♥ Hwain";
   window.scrollTo({ top: 0, behavior: "instant" });
   if (section === "home") { refreshHome(); updateHomeClock(); }
   document.querySelectorAll(".page textarea").forEach(el => { if (el.offsetParent) resizeTextarea(el); });
